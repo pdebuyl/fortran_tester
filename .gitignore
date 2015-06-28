@@ -1,0 +1,6 @@
+*~
+*.o
+*.mod
+.DS_Store?
+
+test_tester

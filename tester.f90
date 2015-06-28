@@ -1,0 +1,129 @@
+module module_test
+  implicit none
+  private
+  public :: tester_t
+
+  type tester_t
+     integer :: n_errors
+     integer :: n_tests
+     real :: r_tol
+     double precision :: d_tol
+   contains
+     procedure :: init
+     procedure :: print
+     generic, public :: assert_equal => assert_equal_i, assert_equal_l
+     procedure, private :: assert_equal_i, assert_equal_l
+     generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
+     procedure, private :: assert_close_d, assert_close_r, assert_close_d_1
+  end type tester_t
+
+contains
+
+  subroutine init(this, d_tol, r_tol)
+    class(tester_t), intent(out) :: this
+    double precision, intent(in), optional :: d_tol
+    real, intent(in), optional :: r_tol
+
+    this% n_errors = 0
+    this% n_tests = 0
+
+    if (present(d_tol)) then
+       this% d_tol = d_tol
+    else
+       this% d_tol = 2.d0*epsilon(1.d0)
+    end if
+
+    if (present(r_tol)) then
+       this% r_tol = r_tol
+    else
+       this% r_tol = 2.*epsilon(1.)
+    end if
+
+  end subroutine init
+
+  subroutine print(this)
+    class(tester_t), intent(in) :: this
+
+    write(*,*) this% n_errors, 'error(s) for', this% n_tests, 'test(s)'
+  end subroutine print
+
+  subroutine assert_equal_i(this, i1, i2, fail)
+    class(tester_t), intent(inout) :: this
+    integer, intent(in) :: i1, i2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+    if (i1 .ne. i2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_i
+
+  subroutine assert_equal_l(this, l1, l2, fail)
+    class(tester_t), intent(inout) :: this
+    logical, intent(in) :: l1, l2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+    if (l1 .neqv. l2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_l
+
+  subroutine assert_close_d(this, d1, d2, fail)
+    class(tester_t), intent(inout) :: this
+    double precision, intent(in) :: d1, d2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+
+    if ( abs(d1-d2) > this% d_tol ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_close_d
+
+  subroutine assert_close_d_1(this, d1, d2, fail)
+    class(tester_t), intent(inout) :: this
+    double precision, intent(in), dimension(:) :: d1, d2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(d1) .ne. size(d2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(d1-d2)) > this% d_tol ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_close_d_1
+
+  subroutine assert_close_r(this, r1, r2, fail)
+    class(tester_t), intent(inout) :: this
+    real, intent(in) :: r1, r2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+
+    if ( abs(r1-r2) > this% r_tol ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_close_r
+
+end module module_test
