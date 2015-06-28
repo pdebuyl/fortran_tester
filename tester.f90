@@ -15,8 +15,8 @@ module module_test
    contains
      procedure :: init
      procedure :: print
-     generic, public :: assert_equal => assert_equal_i, assert_equal_l
-     procedure, private :: assert_equal_i, assert_equal_l
+     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1
+     procedure, private :: assert_equal_i, assert_equal_l, assert_equal_i_1
      generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
      procedure, private :: assert_close_d, assert_close_r, assert_close_d_1
   end type tester_t
@@ -78,6 +78,27 @@ contains
     end if
 
   end subroutine assert_equal_l
+
+  subroutine assert_equal_i_1(this, i1, i2, fail)
+    class(tester_t), intent(inout) :: this
+    integer, intent(in), dimension(:) :: i1, i2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(i1) .ne. size(i2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(i1-i2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_i_1
 
   subroutine assert_close_d(this, d1, d2, fail)
     class(tester_t), intent(inout) :: this

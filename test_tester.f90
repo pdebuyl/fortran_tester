@@ -14,6 +14,8 @@ program test_mt
 
   call tester% assert_equal(-121, -11**2)
 
+  call tester% assert_equal([1, -10, 1899010], [1, -10, 1899010])
+
   call tester% assert_equal(.true., 2 > 1)
 
   call tester% assert_close(1.d0, (1.d0+1.d-16))
