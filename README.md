@@ -7,7 +7,7 @@ A minimal example:
 
 ```fortran
 program test
-  use module_test
+  use tester
   implicit none
 
   type(tester_t) :: tester

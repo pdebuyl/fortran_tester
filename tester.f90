@@ -2,7 +2,7 @@
 ! Copyright 2015 Pierre de Buyl
 ! License: BSD
 
-module module_test
+module tester
   implicit none
   private
   public :: tester_t
@@ -151,4 +151,4 @@ contains
 
   end subroutine assert_close_r
 
-end module module_test
+end module tester

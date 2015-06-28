@@ -3,7 +3,7 @@
 ! License: BSD
 
 program test_mt
-  use module_test
+  use tester
   implicit none
 
   type(tester_t) :: tester
