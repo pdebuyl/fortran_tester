@@ -1,3 +1,7 @@
+! This file is part of fortran_tester
+! Copyright 2015 Pierre de Buyl
+! License: BSD
+
 program test_mt
   use module_test
   implicit none
