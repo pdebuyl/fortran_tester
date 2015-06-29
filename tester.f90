@@ -48,7 +48,10 @@ contains
   subroutine print(this)
     class(tester_t), intent(in) :: this
 
-    write(*,*) this% n_errors, 'error(s) for', this% n_tests, 'test(s)'
+    write(*,*) 'fortran_tester:', this% n_errors, ' error(s) for', this% n_tests, 'test(s)'
+
+    if (this% n_errors == 0) write(*,*) 'fortran_tester: all tests succeeded'
+
   end subroutine print
 
   subroutine assert_equal_i(this, i1, i2, fail)
