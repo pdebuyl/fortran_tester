@@ -15,8 +15,8 @@ module tester
    contains
      procedure :: init
      procedure :: print
-     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1
-     procedure, private :: assert_equal_i, assert_equal_l, assert_equal_i_1
+     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1, assert_equal_d
+     procedure, private :: assert_equal_i, assert_equal_l, assert_equal_i_1, assert_equal_d
      generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
      procedure, private :: assert_close_d, assert_close_r, assert_close_d_1
   end type tester_t
@@ -68,7 +68,21 @@ contains
 
   end subroutine assert_equal_i
 
-  subroutine assert_equal_l(this, l1, l2, fail)
+  subroutine assert_equal_d(this, d1, d2, fail)
+    class(tester_t), intent(inout) :: this
+    double precision, intent(in) :: d1, d2
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+    if (d1 .ne. d2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_d
+
+ subroutine assert_equal_l(this, l1, l2, fail)
     class(tester_t), intent(inout) :: this
     logical, intent(in) :: l1, l2
     logical, intent(in), optional :: fail
