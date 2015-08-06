@@ -16,9 +16,14 @@ module tester
      procedure :: init
      procedure :: print
      generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1, assert_equal_d
-     procedure, private :: assert_equal_i, assert_equal_l, assert_equal_i_1, assert_equal_d
+     procedure, private :: assert_equal_i
+     procedure, private :: assert_equal_l
+     procedure, private :: assert_equal_i_1
+     procedure, private :: assert_equal_d
      generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
-     procedure, private :: assert_close_d, assert_close_r, assert_close_d_1
+     procedure, private :: assert_close_d
+     procedure, private :: assert_close_r
+     procedure, private :: assert_close_d_1
   end type tester_t
 
 contains
