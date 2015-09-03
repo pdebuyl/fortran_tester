@@ -20,6 +20,10 @@ module tester
      procedure, private :: assert_equal_l
      procedure, private :: assert_equal_i_1
      procedure, private :: assert_equal_d
+     generic, public :: assert_positive => assert_positive_i, assert_positive_i_1, assert_positive_d
+     procedure, private :: assert_positive_i
+     procedure, private :: assert_positive_i_1
+     procedure, private :: assert_positive_d
      generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
      procedure, private :: assert_close_d
      procedure, private :: assert_close_r
@@ -121,6 +125,49 @@ contains
     end if
 
   end subroutine assert_equal_i_1
+
+  subroutine assert_positive_i(this, i, fail)
+    class(tester_t), intent(inout) :: this
+    integer, intent(in) :: i
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+    if (i < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i
+
+  subroutine assert_positive_d(this, d, fail)
+    class(tester_t), intent(inout) :: this
+    double precision, intent(in) :: d
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+    if (d < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_d
+
+  subroutine assert_positive_i_1(this, i, fail)
+    class(tester_t), intent(inout) :: this
+    integer, intent(in), dimension(:) :: i
+    logical, intent(in), optional :: fail
+
+    this% n_tests = this% n_tests + 1
+
+    if ( minval(i) < 0 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i_1
 
   subroutine assert_close_d(this, d1, d2, fail)
     class(tester_t), intent(inout) :: this
