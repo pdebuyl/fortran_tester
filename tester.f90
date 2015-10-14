@@ -54,12 +54,28 @@ contains
 
   end subroutine init
 
-  subroutine print(this)
+  subroutine print(this, errorstop)
     class(tester_t), intent(in) :: this
+    logical, intent(in), optional :: errorstop
+
+    logical :: do_errorstop
+    if (present(errorstop)) then
+       do_errorstop = errorstop
+    else
+       do_errorstop = .true.
+    end if
 
     write(*,*) 'fortran_tester:', this% n_errors, ' error(s) for', this% n_tests, 'test(s)'
 
-    if (this% n_errors == 0) write(*,*) 'fortran_tester: all tests succeeded'
+    if (this% n_errors == 0) then
+       write(*,*) 'fortran_tester: all tests succeeded'
+    else
+       if (do_errorstop) then
+          error stop 'fortran_tester: tests failed'
+       else
+          write(*,*) 'fortran_tester: tests failed'
+       end if
+    end if
 
   end subroutine print
 
