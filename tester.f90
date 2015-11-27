@@ -15,10 +15,12 @@ module tester
    contains
      procedure :: init
      procedure :: print
-     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1, assert_equal_d
+     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1, &
+          assert_equal_l_1, assert_equal_d
      procedure, private :: assert_equal_i
      procedure, private :: assert_equal_l
      procedure, private :: assert_equal_i_1
+     procedure, private :: assert_equal_l_1
      procedure, private :: assert_equal_d
      generic, public :: assert_positive => assert_positive_i, assert_positive_i_1, assert_positive_d
      procedure, private :: assert_positive_i
@@ -141,6 +143,32 @@ contains
     end if
 
   end subroutine assert_equal_i_1
+
+  subroutine assert_equal_l_1(this, l1, l2, fail)
+    class(tester_t), intent(inout) :: this
+    logical, intent(in), dimension(:) :: l1, l2
+    logical, intent(in), optional :: fail
+
+    integer :: k
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(l1) .ne. size(l2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       do k = 1, size(l1)
+          if (l1(k) .neqv. l2(k)) then
+             if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+                this% n_errors = this% n_errors + 1
+             end if
+             exit
+          end if
+       end do
+    end if
+
+  end subroutine assert_equal_l_1
 
   subroutine assert_positive_i(this, i, fail)
     class(tester_t), intent(inout) :: this
