@@ -2,5 +2,6 @@
 *.o
 *.mod
 .DS_Store?
+/build
 
 test_tester
