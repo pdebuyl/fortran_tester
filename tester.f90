@@ -1,5 +1,6 @@
 ! This file is part of fortran_tester
-! Copyright 2015 Pierre de Buyl
+! Copyright 2015 Pierre de Buyl and Peter Colberg
+!           2016 Pierre de Buyl
 ! License: BSD
 
 module tester
