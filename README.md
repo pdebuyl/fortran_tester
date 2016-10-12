@@ -10,15 +10,15 @@ program test
   use tester
   implicit none
 
-  type(tester_t) :: tester
+  type(tester_t) :: my_tester
 
-  call tester% init()
+  call my_tester% init()
 
-  call tester% assert_equal(1, 2, fail=.true.)
+  call my_tester% assert_equal(1, 2, fail=.true.)
 
-  call tester% print()
+  call my_tester% print()
 
-end program test_mt
+end program test
 ```
 
 If none of the tests fail, the `print` method displays the message
