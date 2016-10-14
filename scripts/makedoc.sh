@@ -39,6 +39,7 @@ USEREMAIL=$3
 git config --global user.name "$USERNAME"
 git config --global user.email "$USEREMAIL"
 git clone --branch=gh-pages https://${GH_TOKEN}@github.com/$GITREPO.git doc/html
+rm -rf doc/html/*
 ford doc/main_page.md --debug
 mv doc/html/publish/* doc/html/
 rm -rf doc/html/publish/
