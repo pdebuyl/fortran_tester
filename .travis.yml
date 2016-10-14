@@ -22,7 +22,7 @@ addons:
 env:
   global:
     - MAKECOVERAGE="./scripts/makecoverage.sh"
-    - MAKEDOC="./scripts/makedoc.sh szaghi/fortran_tester"
+    - MAKEDOC="./scripts/makedoc.sh szaghi/fortran_tester 'Stefano Zaghi' stefano.zaghi@gmail.com"
     - CLEAN=""
     - MAKETAR=""
 
@@ -47,11 +47,11 @@ install:
 
 script:
   - $MAKECOVERAGE
+  - $MAKEDOC
 
 after_success:
   # - find . -name '*.gcno' -print
   # - bash <(curl -s https://codecov.io/bash)
-  - $MAKEDOC
 
 # before_deploy:
 #   - $CLEAN

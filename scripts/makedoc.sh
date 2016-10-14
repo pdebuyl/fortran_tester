@@ -34,8 +34,10 @@
 
 set -ev # echo what we are doing and fail on errors
 GITREPO=$1
-git config --global user.name "Stefano Zaghi"
-git config --global user.email "stefano.zaghi@gmail.com"
+USERNAME=$2
+USEREMAIL=$3
+git config --global user.name "$USERNAME"
+git config --global user.email "$USEREMAIL"
 git clone --branch=gh-pages https://${GH_TOKEN}@github.com/$GITREPO.git doc/html
 ford doc/main_page.md --debug
 mv doc/html/publish/* doc/html/
