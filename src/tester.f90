@@ -4,62 +4,113 @@
 ! License: BSD
 
 module tester
+  use, intrinsic :: iso_fortran_env, only : int8, int16, int32, int64, real32, real64
+
   implicit none
   private
   public :: tester_t
 
-  type tester_t
-     integer :: n_errors
-     integer :: n_tests
-     real :: r_tol
-     double precision :: d_tol
+  type :: tester_t
+     !< The main **tester** class.
+     integer(int32) :: n_errors=0_int32                         !< Number of errors.
+     integer(int32) :: n_tests=0_int32                          !< Number of tests.
+     real(real32)   :: tolerance32=2._real32*epsilon(1._real32) !< Real tolerance, 32 bits.
+     real(real64)   :: tolerance64=2._real64*epsilon(1._real64) !< Real tolerance, 64 bits.
    contains
-     procedure :: init
-     procedure :: print
-     generic, public :: assert_equal => assert_equal_i, assert_equal_l, assert_equal_i_1, &
-          assert_equal_l_1, assert_equal_d
-     procedure, private :: assert_equal_i
-     procedure, private :: assert_equal_l
-     procedure, private :: assert_equal_i_1
-     procedure, private :: assert_equal_l_1
-     procedure, private :: assert_equal_d
-     generic, public :: assert_positive => assert_positive_i, assert_positive_i_1, assert_positive_d
-     procedure, private :: assert_positive_i
-     procedure, private :: assert_positive_i_1
-     procedure, private :: assert_positive_d
-     generic, public :: assert_close => assert_close_d, assert_close_r, assert_close_d_1
-     procedure, private :: assert_close_d
-     procedure, private :: assert_close_r
-     procedure, private :: assert_close_d_1
+     procedure :: init                           !< Initialize the tester.
+     procedure :: print                          !< Print tests results.
+     generic, public :: assert_equal =>     &
+                        assert_equal_i8,    &
+                        assert_equal_i16,   &
+                        assert_equal_i32,   &
+                        assert_equal_i64,   &
+                        assert_equal_r32,   &
+                        assert_equal_r64,   &
+                        assert_equal_l,     &
+                        assert_equal_i8_1,  &
+                        assert_equal_i16_1, &
+                        assert_equal_i32_1, &
+                        assert_equal_i64_1, &
+                        assert_equal_r32_1, &
+                        assert_equal_r64_1, &
+                        assert_equal_l_1         !< Check if two results (integer, real or logical) are equal.
+     procedure, private :: assert_equal_i8       !< Check if two integers (8  bits) are equal.
+     procedure, private :: assert_equal_i16      !< Check if two integers (16 bits) are equal.
+     procedure, private :: assert_equal_i32      !< Check if two integers (32 bits) are equal.
+     procedure, private :: assert_equal_i64      !< Check if two integers (64 bits) are equal.
+     procedure, private :: assert_equal_r32      !< Check if two reals (32 bits) are equal.
+     procedure, private :: assert_equal_r64      !< Check if two reals (64 bits) are equal.
+     procedure, private :: assert_equal_l        !< Check if two logicals are equal.
+     procedure, private :: assert_equal_i8_1     !< Check if two integer (8  bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_i16_1    !< Check if two integer (16 bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_i32_1    !< Check if two integer (32 bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_i64_1    !< Check if two integer (64 bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_r32_1    !< Check if two real (32 bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_r64_1    !< Check if two real (64 bits) arrays (rank 1) are equal.
+     procedure, private :: assert_equal_l_1      !< Check if two logical arrays (rank 1) are equal.
+     generic, public :: assert_positive =>     &
+                        assert_positive_i8,    &
+                        assert_positive_i16,   &
+                        assert_positive_i32,   &
+                        assert_positive_i64,   &
+                        assert_positive_r32,   &
+                        assert_positive_r64,   &
+                        assert_positive_i8_1,  &
+                        assert_positive_i16_1, &
+                        assert_positive_i32_1, &
+                        assert_positive_i64_1, &
+                        assert_positive_r32_1, &
+                        assert_positive_r64_1    !< Check if a number (integer or real) is positive.
+     procedure, private :: assert_positive_i8    !< Check if a integer (8  bits) is positive.
+     procedure, private :: assert_positive_i16   !< Check if a integer (16 bits) is positive.
+     procedure, private :: assert_positive_i32   !< Check if a integer (32 bits) is positive.
+     procedure, private :: assert_positive_i64   !< Check if a integer (64 bits) is positive.
+     procedure, private :: assert_positive_r32   !< Check if a real (32 bits) is positive.
+     procedure, private :: assert_positive_r64   !< Check if a real (64 bits) is positive.
+     procedure, private :: assert_positive_i8_1  !< Check if a integer (8  bits) array (rank 1) is positive.
+     procedure, private :: assert_positive_i16_1 !< Check if a integer (16 bits) array (rank 1) is positive.
+     procedure, private :: assert_positive_i32_1 !< Check if a integer (32 bits) array (rank 1) is positive.
+     procedure, private :: assert_positive_i64_1 !< Check if a integer (64 bits) array (rank 1) is positive.
+     procedure, private :: assert_positive_r32_1 !< Check if a real (32 bits) array (rank 1) is positive.
+     procedure, private :: assert_positive_r64_1 !< Check if a real (64 bits) array (rank 1) is positive.
+     generic, public :: assert_close =>   &
+                        assert_close_r32, &
+                        assert_close_r64, &
+                        assert_close_r64_1       !< Check if two reals are close with respect a tolerance.
+     procedure, private :: assert_close_r32      !< Check if two reals (32 bits) are close with respect a tolerance.
+     procedure, private :: assert_close_r64      !< Check if two reals (64 bits) are close with respect a tolerance.
+     procedure, private :: assert_close_r64_1    !< Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
   end type tester_t
 
 contains
 
-  subroutine init(this, d_tol, r_tol)
-    class(tester_t), intent(out) :: this
-    double precision, intent(in), optional :: d_tol
-    real, intent(in), optional :: r_tol
+  subroutine init(this, tolerance32, tolerance64)
+    !< Initialize the tester.
+    class(tester_t), intent(out)          :: this        !< The tester.
+    real(real32),    intent(in), optional :: tolerance32 !< Real tolerance, 32 bits.
+    real(real64),    intent(in), optional :: tolerance64 !< Real tolerance, 64 bits.
 
     this% n_errors = 0
     this% n_tests = 0
 
-    if (present(d_tol)) then
-       this% d_tol = d_tol
+    if (present(tolerance64)) then
+       this% tolerance64 = tolerance64
     else
-       this% d_tol = 2.d0*epsilon(1.d0)
+       this% tolerance64 = 2._real64*epsilon(1._real64)
     end if
 
-    if (present(r_tol)) then
-       this% r_tol = r_tol
+    if (present(tolerance32)) then
+       this% tolerance32 = tolerance32
     else
-       this% r_tol = 2.*epsilon(1.)
+       this% tolerance32 = 2._real32*epsilon(1._real32)
     end if
 
   end subroutine init
 
   subroutine print(this, errorstop)
-    class(tester_t), intent(in) :: this
-    logical, intent(in), optional :: errorstop
+    !< Print tests results.
+    class(tester_t), intent(in)           :: this      !< The tester.
+    logical,         intent(in), optional :: errorstop !< Flag to activate error stop if one test fails.
 
     logical :: do_errorstop
     if (present(errorstop)) then
@@ -82,10 +133,11 @@ contains
 
   end subroutine print
 
-  subroutine assert_equal_i(this, i1, i2, fail)
-    class(tester_t), intent(inout) :: this
-    integer, intent(in) :: i1, i2
-    logical, intent(in), optional :: fail
+  subroutine assert_equal_i8(this, i1, i2, fail)
+    !< Check if two integers (8 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    integer(int8),   intent(in)           :: i1, i2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
 
     this% n_tests = this% n_tests + 1
     if (i1 .ne. i2) then
@@ -94,26 +146,88 @@ contains
        end if
     end if
 
-  end subroutine assert_equal_i
+  end subroutine assert_equal_i8
 
-  subroutine assert_equal_d(this, d1, d2, fail)
-    class(tester_t), intent(inout) :: this
-    double precision, intent(in) :: d1, d2
-    logical, intent(in), optional :: fail
+  subroutine assert_equal_i16(this, i1, i2, fail)
+    !< Check if two integers (16 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    integer(int16),  intent(in)           :: i1, i2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
 
     this% n_tests = this% n_tests + 1
-    if (d1 .ne. d2) then
+    if (i1 .ne. i2) then
        if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
           this% n_errors = this% n_errors + 1
        end if
     end if
 
-  end subroutine assert_equal_d
+  end subroutine assert_equal_i16
+
+  subroutine assert_equal_i32(this, i1, i2, fail)
+    !< Check if two integers (32 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    integer(int32),  intent(in)           :: i1, i2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (i1 .ne. i2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_i32
+
+  subroutine assert_equal_i64(this, i1, i2, fail)
+    !< Check if two integers (64 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    integer(int64),  intent(in)           :: i1, i2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (i1 .ne. i2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_i64
+
+  subroutine assert_equal_r32(this, r1, r2, fail)
+    !< Check if two reals (32 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    real(real32),    intent(in)           :: r1, r2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (r1 .ne. r2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_r32
+
+  subroutine assert_equal_r64(this, r1, r2, fail)
+    !< Check if two reals (64 bits) are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    real(real64),    intent(in)           :: r1, r2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (r1 .ne. r2) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_equal_r64
 
  subroutine assert_equal_l(this, l1, l2, fail)
-    class(tester_t), intent(inout) :: this
-    logical, intent(in) :: l1, l2
-    logical, intent(in), optional :: fail
+    !< Check if two logicals are equal.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    logical,         intent(in)           :: l1, l2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
 
     this% n_tests = this% n_tests + 1
     if (l1 .neqv. l2) then
@@ -124,10 +238,11 @@ contains
 
   end subroutine assert_equal_l
 
-  subroutine assert_equal_i_1(this, i1, i2, fail)
-    class(tester_t), intent(inout) :: this
-    integer, intent(in), dimension(:) :: i1, i2
-    logical, intent(in), optional :: fail
+  subroutine assert_equal_i8_1(this, i1, i2, fail)
+    !< Check if two integer (8 bits) arrays (rank 1) are equal.
+    class(tester_t),             intent(inout)        :: this   !< The tester.
+    integer(int8), dimension(:), intent(in)           :: i1, i2 !< Results to be compared.
+    logical,                     intent(in), optional :: fail   !< Fail flag.
 
     this% n_tests = this% n_tests + 1
 
@@ -143,12 +258,123 @@ contains
        end if
     end if
 
-  end subroutine assert_equal_i_1
+  end subroutine assert_equal_i8_1
+
+  subroutine assert_equal_i16_1(this, i1, i2, fail)
+    !< Check if two integer (16 bits) arrays (rank 1) are equal.
+    class(tester_t),              intent(inout)        :: this   !< The tester.
+    integer(int16), dimension(:), intent(in)           :: i1, i2 !< Results to be compared.
+    logical,                      intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(i1) .ne. size(i2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(i1-i2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_i16_1
+
+  subroutine assert_equal_i32_1(this, i1, i2, fail)
+    !< Check if two integer (32 bits) arrays (rank 1) are equal.
+    class(tester_t),              intent(inout)        :: this   !< The tester.
+    integer(int32), dimension(:), intent(in)           :: i1, i2 !< Results to be compared.
+    logical,                      intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(i1) .ne. size(i2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(i1-i2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_i32_1
+
+  subroutine assert_equal_i64_1(this, i1, i2, fail)
+    !< Check if two integer (64 bits) arrays (rank 1) are equal.
+    class(tester_t),              intent(inout)        :: this   !< The tester.
+    integer(int64), dimension(:), intent(in)           :: i1, i2 !< Results to be compared.
+    logical,                      intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(i1) .ne. size(i2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(i1-i2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_i64_1
+
+  subroutine assert_equal_r32_1(this, r1, r2, fail)
+    !< Check if two real (32 bits) arrays (rank 1) are equal.
+    class(tester_t),            intent(inout)        :: this   !< The tester.
+    real(real32), dimension(:), intent(in)           :: r1, r2 !< Results to be compared.
+    logical,                    intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(r1) .ne. size(r2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(r1-r2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_r32_1
+
+  subroutine assert_equal_r64_1(this, r1, r2, fail)
+    !< Check if two real (64 bits) arrays (rank 1) are equal.
+    class(tester_t),            intent(inout)        :: this   !< The tester.
+    real(real64), dimension(:), intent(in)           :: r1, r2 !< Results to be compared.
+    logical,                    intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(r1) .ne. size(r2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(r1-r2)) > 0 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_equal_r64_1
 
   subroutine assert_equal_l_1(this, l1, l2, fail)
-    class(tester_t), intent(inout) :: this
-    logical, intent(in), dimension(:) :: l1, l2
-    logical, intent(in), optional :: fail
+    !< Check if two logical arrays (rank 1) are equal.
+    class(tester_t), intent(inout)            :: this   !< The tester.
+    logical,         intent(in), dimension(:) :: l1, l2 !< Results to be compared.
+    logical,         intent(in), optional     :: fail   !< Fail flag.
 
     integer :: k
 
@@ -171,10 +397,11 @@ contains
 
   end subroutine assert_equal_l_1
 
-  subroutine assert_positive_i(this, i, fail)
-    class(tester_t), intent(inout) :: this
-    integer, intent(in) :: i
-    logical, intent(in), optional :: fail
+  subroutine assert_positive_i8(this, i, fail)
+    !< Check if a integer (32 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    integer(int8),   intent(in)           :: i    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
 
     this% n_tests = this% n_tests + 1
     if (i < 0) then
@@ -183,26 +410,88 @@ contains
        end if
     end if
 
-  end subroutine assert_positive_i
+  end subroutine assert_positive_i8
 
-  subroutine assert_positive_d(this, d, fail)
-    class(tester_t), intent(inout) :: this
-    double precision, intent(in) :: d
-    logical, intent(in), optional :: fail
+  subroutine assert_positive_i16(this, i, fail)
+    !< Check if a integer (16 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    integer(int16),  intent(in)           :: i    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
 
     this% n_tests = this% n_tests + 1
-    if (d < 0) then
+    if (i < 0) then
        if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
           this% n_errors = this% n_errors + 1
        end if
     end if
 
-  end subroutine assert_positive_d
+  end subroutine assert_positive_i16
 
-  subroutine assert_positive_i_1(this, i, fail)
-    class(tester_t), intent(inout) :: this
-    integer, intent(in), dimension(:) :: i
-    logical, intent(in), optional :: fail
+  subroutine assert_positive_i32(this, i, fail)
+    !< Check if a integer (32 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    integer(int32),  intent(in)           :: i    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (i < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i32
+
+  subroutine assert_positive_i64(this, i, fail)
+    !< Check if a integer (32 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    integer(int64),  intent(in)           :: i    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (i < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i64
+
+  subroutine assert_positive_r32(this, r, fail)
+    !< Check if a real (32 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    real(real32),    intent(in)           :: r    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (r < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_r32
+
+  subroutine assert_positive_r64(this, r, fail)
+    !< Check if a real (64 bits) is positive.
+    class(tester_t), intent(inout)        :: this !< The tester.
+    real(real64),    intent(in)           :: r    !< Result to be checked.
+    logical,         intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+    if (r < 0) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_r64
+
+  subroutine assert_positive_i8_1(this, i, fail)
+    !< Check if a integer (8 bits) array (rank 1) is positive.
+    class(tester_t),             intent(inout)        :: this !< The tester.
+    integer(int8), dimension(:), intent(in)           :: i    !< Result to be checked.
+    logical,                     intent(in), optional :: fail !< Fail flag.
 
     this% n_tests = this% n_tests + 1
 
@@ -212,57 +501,140 @@ contains
        end if
     end if
 
-  end subroutine assert_positive_i_1
+  end subroutine assert_positive_i8_1
 
-  subroutine assert_close_d(this, d1, d2, fail)
-    class(tester_t), intent(inout) :: this
-    double precision, intent(in) :: d1, d2
-    logical, intent(in), optional :: fail
+  subroutine assert_positive_i16_1(this, i, fail)
+    !< Check if a integer (16 bits) array (rank 1) is positive.
+    class(tester_t),              intent(inout)        :: this !< The tester.
+    integer(int16), dimension(:), intent(in)           :: i    !< Result to be checked.
+    logical,                      intent(in), optional :: fail !< Fail flag.
 
     this% n_tests = this% n_tests + 1
 
-    if ( abs(d1-d2) > this% d_tol ) then
+    if ( minval(i) < 0 ) then
        if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
           this% n_errors = this% n_errors + 1
        end if
     end if
 
-  end subroutine assert_close_d
+  end subroutine assert_positive_i16_1
 
-  subroutine assert_close_d_1(this, d1, d2, fail)
-    class(tester_t), intent(inout) :: this
-    double precision, intent(in), dimension(:) :: d1, d2
-    logical, intent(in), optional :: fail
+  subroutine assert_positive_i32_1(this, i, fail)
+    !< Check if a integer (32 bits) array (rank 1) is positive.
+    class(tester_t),              intent(inout)        :: this !< The tester.
+    integer(int32), dimension(:), intent(in)           :: i    !< Result to be checked.
+    logical,                      intent(in), optional :: fail !< Fail flag.
 
     this% n_tests = this% n_tests + 1
 
-    if ( size(d1) .ne. size(d2) ) then
+    if ( minval(i) < 0 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i32_1
+
+  subroutine assert_positive_i64_1(this, i, fail)
+    !< Check if a integer (64 bits) array (rank 1) is positive.
+    class(tester_t),              intent(inout)        :: this !< The tester.
+    integer(int64), dimension(:), intent(in)           :: i    !< Result to be checked.
+    logical,                      intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( minval(i) < 0 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_i64_1
+
+  subroutine assert_positive_r32_1(this, r, fail)
+    !< Check if a real (32 bits) array (rank 1) is positive.
+    class(tester_t),            intent(inout)        :: this !< The tester.
+    real(real32), dimension(:), intent(in)           :: r    !< Result to be checked.
+    logical,                    intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( minval(r) < 0 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_r32_1
+
+  subroutine assert_positive_r64_1(this, r, fail)
+    !< Check if a real (64 bits) array (rank 1) is positive.
+    class(tester_t),            intent(inout)        :: this !< The tester.
+    real(real64), dimension(:), intent(in)           :: r    !< Result to be checked.
+    logical,                    intent(in), optional :: fail !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( minval(r) < 0 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_positive_r64_1
+
+  subroutine assert_close_r32(this, r1, r2, fail)
+    !< Check if two reals (32 bits) are close with respect a tolerance.
+    class(tester_t), intent(inout)        :: this   !< The tester.
+    real(real32),    intent(in)           :: r1, r2 !< Results to be compared.
+    logical,         intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( abs(r1-r2) > this% tolerance32 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_close_r32
+
+  subroutine assert_close_r64(this, r1, r2, fail)
+    !< Check if two reals (64 bits) are close with respect a tolerance.
+    class(tester_t),  intent(inout)        :: this   !< The tester.
+    real(real64),     intent(in)           :: r1, r2 !< Results to be compared.
+    logical,          intent(in), optional :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( abs(r1-r2) > this% tolerance64 ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    end if
+
+  end subroutine assert_close_r64
+
+  subroutine assert_close_r64_1(this, r1, r2, fail)
+    !< Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
+    class(tester_t), intent(inout)            :: this   !< The tester.
+    real(real64),    intent(in), dimension(:) :: r1, r2 !< Results to be compared.
+    logical,         intent(in), optional     :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(r1) .ne. size(r2) ) then
        if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
           this% n_errors = this% n_errors + 1
        end if
     else
-       if ( maxval(abs(d1-d2)) > this% d_tol ) then
+       if ( maxval(abs(r1-r2)) > this% tolerance64 ) then
           if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
              this% n_errors = this% n_errors + 1
           end if
        end if
     end if
 
-  end subroutine assert_close_d_1
-
-  subroutine assert_close_r(this, r1, r2, fail)
-    class(tester_t), intent(inout) :: this
-    real, intent(in) :: r1, r2
-    logical, intent(in), optional :: fail
-
-    this% n_tests = this% n_tests + 1
-
-    if ( abs(r1-r2) > this% r_tol ) then
-       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
-          this% n_errors = this% n_errors + 1
-       end if
-    end if
-
-  end subroutine assert_close_r
+  end subroutine assert_close_r64_1
 
 end module tester
