@@ -3,5 +3,6 @@
 *.mod
 .DS_Store?
 /build
+doc/html
 
 test_tester

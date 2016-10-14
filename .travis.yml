@@ -22,7 +22,7 @@ addons:
 env:
   global:
     - MAKECOVERAGE="./scripts/makecoverage.sh"
-    - MAKEDOC=""
+    - MAKEDOC="./scripts/makedoc.sh szaghi/fortran_tester"
     - CLEAN=""
     - MAKETAR=""
 
@@ -40,18 +40,18 @@ install:
   - ls -l /usr/bin/gfortran-6
   - ln -fs /usr/bin/gcov-6 "$HOME/.local/bin/gcov" && gcov --version
   # - pip install --user --upgrade pygooglechart
-  # - pip install --user --upgrade graphviz
+  - pip install --user --upgrade graphviz
   # - pip install --user --upgrade FoBiS.py
-  # - pip install --user --upgrade markdown-checklist 
-  # - pip install --user --upgrade ford
+  - pip install --user --upgrade markdown-checklist 
+  - pip install --user --upgrade ford
 
 script:
   - $MAKECOVERAGE
 
-# after_success:
-#   - find . -name '*.gcno' -print
-#   - bash <(curl -s https://codecov.io/bash)
-#   - $MAKEDOC
+after_success:
+  # - find . -name '*.gcno' -print
+  # - bash <(curl -s https://codecov.io/bash)
+  - $MAKEDOC
 
 # before_deploy:
 #   - $CLEAN
