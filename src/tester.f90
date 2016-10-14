@@ -73,12 +73,14 @@ module tester
      procedure, private :: assert_positive_i64_1 !< Check if a integer (64 bits) array (rank 1) is positive.
      procedure, private :: assert_positive_r32_1 !< Check if a real (32 bits) array (rank 1) is positive.
      procedure, private :: assert_positive_r64_1 !< Check if a real (64 bits) array (rank 1) is positive.
-     generic, public :: assert_close =>   &
-                        assert_close_r32, &
-                        assert_close_r64, &
+     generic, public :: assert_close =>     &
+                        assert_close_r32,   &
+                        assert_close_r64,   &
+                        assert_close_r32_1, &
                         assert_close_r64_1       !< Check if two reals are close with respect a tolerance.
      procedure, private :: assert_close_r32      !< Check if two reals (32 bits) are close with respect a tolerance.
      procedure, private :: assert_close_r64      !< Check if two reals (64 bits) are close with respect a tolerance.
+     procedure, private :: assert_close_r32_1    !< Check if two real (32 bits) arrays (rank 1) are close with respect a tolerance.
      procedure, private :: assert_close_r64_1    !< Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
   end type tester_t
 
@@ -614,6 +616,28 @@ contains
     end if
 
   end subroutine assert_close_r64
+
+  subroutine assert_close_r32_1(this, r1, r2, fail)
+    !< Check if two real (32 bits) arrays (rank 1) are close with respect a tolerance.
+    class(tester_t), intent(inout)            :: this   !< The tester.
+    real(real32),    intent(in), dimension(:) :: r1, r2 !< Results to be compared.
+    logical,         intent(in), optional     :: fail   !< Fail flag.
+
+    this% n_tests = this% n_tests + 1
+
+    if ( size(r1) .ne. size(r2) ) then
+       if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+          this% n_errors = this% n_errors + 1
+       end if
+    else
+       if ( maxval(abs(r1-r2)) > this% tolerance64 ) then
+          if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
+             this% n_errors = this% n_errors + 1
+          end if
+       end if
+    end if
+
+  end subroutine assert_close_r32_1
 
   subroutine assert_close_r64_1(this, r1, r2, fail)
     !< Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
