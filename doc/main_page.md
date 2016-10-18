@@ -2,7 +2,7 @@ project: fortran_tester
 src_dir: ../src
          ../test
 output_dir: html/publish/
-project_github: https://github.com/szaghi/fortra_tester
+project_github: https://github.com/pdebuyl/fortran_tester
 summary: Fortran module to test Fortran programs
 author: Pierre de Buyl
 github: https://github.com/pdebuyl
@@ -19,4 +19,4 @@ warn: true
 graph: true
 extra_mods: iso_fortran_env:https://gcc.gnu.org/onlinedocs/gfortran/ISO_005fFORTRAN_005fENV.html
 
-{!README-fortran_tester.md!}
+{!../README.md!}

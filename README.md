@@ -29,4 +29,4 @@ use as an automated test.
 **Author:** Pierre de Buyl  
 **License:** BSD
 
-Contributors: Peter Colberg
+Contributors: Peter Colberg, Stefano Szaghi
