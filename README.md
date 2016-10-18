@@ -1,4 +1,4 @@
-# Fortran tester
+# Fortran tester {#mainpage}
 
 `tester` is a Fortran module to test Fortran programs. It provides routines to
 check equality or closeness between variables and counting the errors.
