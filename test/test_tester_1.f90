@@ -2,7 +2,7 @@
 ! Copyright 2015 Pierre de Buyl
 ! License: BSD
 
-program test_mt
+program test_tester_1
   use tester
   implicit none
 
@@ -34,4 +34,4 @@ program test_mt
 
   call test% print()
 
-end program test_mt
+end program test_tester_1
