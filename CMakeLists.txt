@@ -8,7 +8,7 @@ include_directories(${CMAKE_Fortran_MODULE_DIRECTORY})
 
 add_library(fortran_tester src/tester.f90)
 
-foreach(test_name test_tester_1 test_tester_2 test_tester_3 test_tester_4)
+foreach(test_name test_tester_1 test_tester_2 test_tester_3 test_tester_4 test_tester_5)
 add_executable(${test_name} test/${test_name}.f90)
 target_link_libraries(${test_name} fortran_tester)
 add_test(NAME ${test_name} COMMAND ${test_name})
