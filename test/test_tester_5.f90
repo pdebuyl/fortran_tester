@@ -14,6 +14,8 @@ program test_tester_1
 
   call test% assert_equal((1, 1), (2, 2), fail=.true.)
 
+  call test% assert_equal((1234, -1234), (1234, -1234))
+
   call test% assert_close((1._rk, 0._rk), (1._rk, 0._rk))
 
   call test% assert_close((0._rk, 1._rk), (1.e-15_rk, 1._rk), fail=.true.)
@@ -24,6 +26,10 @@ program test_tester_1
 
   a = 1
   b = 1
+
+  call test% assert_close(a, b)
+
+  b(1) = b(1) + complex(0._rk, epsilon(real(b(1))))
 
   call test% assert_close(a, b)
 
