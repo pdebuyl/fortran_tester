@@ -29,7 +29,7 @@ program test_tester_1
 
   call test% assert_close(a, b)
 
-  b(1) = b(1) + complex(0._rk, epsilon(real(b(1))))
+  b(1) = b(1) + cmplx(0._rk, epsilon(real(b(1))))
 
   call test% assert_close(a, b)
 
