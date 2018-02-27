@@ -149,10 +149,9 @@ contains
     if (this% n_errors == 0) then
        write(*,*) 'fortran_tester: all tests succeeded'
     else
+       write(*,*) 'fortran_tester: tests failed'
        if (do_errorstop) then
-          error stop 'fortran_tester: tests failed'
-       else
-          write(*,*) 'fortran_tester: tests failed'
+          stop 1
        end if
     end if
 
