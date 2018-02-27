@@ -1,4 +1,5 @@
-language: generic
+language: c
+dist: trusty
 
 sudo: false
 
