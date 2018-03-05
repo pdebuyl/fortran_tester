@@ -747,7 +747,7 @@ contains
           this% n_errors = this% n_errors + 1
        end if
     else
-       if ( maxval(abs(r1-r2)) > this% tolerance64 ) then
+       if ( maxval(abs(r1-r2)) > this% tolerance32 ) then
           if (.not. present(fail) .or. (present(fail) .and. fail .eqv. .false.)) then
              this% n_errors = this% n_errors + 1
           end if
