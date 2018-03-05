@@ -7,6 +7,7 @@ program test_tester_1
   implicit none
 
   integer, parameter :: long_k = selected_int_kind(18)
+  double precision :: pi = 4*atan(1.d0)
 
   type(tester_t) :: test
 
@@ -22,6 +23,12 @@ program test_tester_1
        0.8541147722227219d0, 0.267520651034313d0 , 0.6948550035165076d0], &
        [0.2420243742417814d0, 0.4924788296716989d0, &
        0.8541147722227219d0, 0.267520651034313d0 , 0.6948550035165076d0])
+
+  call test% assert_close(0.d0, sin(pi))
+
+  call test% assert_equal(0.d0, 0*1.d0)
+
+  call test% assert_equal(0.d0, 1.d0, fail=.true.)
 
   call test% assert_equal(.true., 2 > 1)
 
