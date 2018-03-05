@@ -32,6 +32,11 @@ program test_tester_1
 
   call test% assert_close(1., (1.+1.e-6), fail=.true.)
 
+  call test% assert_close([ 0.58557761, 0.04035789, 0.30463428, &
+       0.57437861, 0.4879709 , 0.00986957], &
+       [ 0.58557761+epsilon(1.0), 0.04035789, 0.30463428+2*epsilon(1.0), &
+       0.57437861, 0.4879709 , 0.00986957-epsilon(1.0)])
+
   call test% assert_close([1.d0, 2.d0, 3.d0], [1.d0+1.d-15, 2.d0, 3.d0], fail=.true.)
 
   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0, 3.d0], fail=.true.)
