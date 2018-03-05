@@ -7,7 +7,9 @@ program test_tester_1
   implicit none
 
   integer, parameter :: rk = selected_real_kind(15)
+  complex(kind=rk) :: x, y
   complex(kind=rk) :: a(5), b(5)
+  complex :: c(3), d(3)
   type(tester_t) :: test
 
   call test% init()
@@ -18,14 +20,38 @@ program test_tester_1
 
   call test% assert_close((1._rk, 0._rk), (1._rk, 0._rk))
 
+  call test% assert_close(cmplx(1., epsilon(0.)), (1., 0.))
+
+  x = (0._rk, 1._rk)
+  y = cmplx(epsilon(0._rk), 1._rk)
+  call test% assert_close(x, y)
+
   call test% assert_close((0._rk, 1._rk), (1.e-15_rk, 1._rk), fail=.true.)
 
   call test% assert_close((0._rk, 1._rk), (1.e-16_rk, 1_rk), fail=.true.)
 
   call test% assert_close((1., 0.), (1., 1.e-6), fail=.true.)
 
-  a = 1
-  b = 1
+  c = 1
+  d = 1
+  d = d + cmplx(0, epsilon(0.))
+
+  call test% assert_close(c, d)
+
+  d = d + cmplx(0, 0.1)
+
+  call test% assert_close(c, d, fail=.true.)
+
+  a = -10
+  b = -10
+
+  call test% assert_equal(a, b)
+
+  b = cmplx(10, 20)
+  call test% assert_equal(a, b, fail=.true.)
+
+  a = 0
+  b = epsilon(0._rk)
 
   call test% assert_close(a, b)
 

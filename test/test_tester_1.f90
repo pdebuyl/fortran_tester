@@ -20,6 +20,10 @@ program test_tester_1
 
   call test% assert_equal(.true., 2 > 1)
 
+  call test% assert_equal(1.0, 1.0)
+
+  call test% assert_equal(1.0, -10.0, fail=.true.)
+
   call test% assert_close(1.d0, (1.d0+1.d-16))
 
   call test% assert_close(1.d0, (1.d0+1.d-15), fail=.true.)
@@ -33,6 +37,10 @@ program test_tester_1
   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0, 3.d0], fail=.true.)
 
   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0])
+
+  call test% assert_positive(epsilon(1.))
+  call test% assert_positive(0.1)
+  call test% assert_positive(0.1d0)
 
   call test% assert_positive([1., 2., 0.])
   call test% assert_positive([1.d0, huge(1.d0)])
