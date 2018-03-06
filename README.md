@@ -5,21 +5,19 @@ check equality or closeness between variables and counting the errors.
 
 A minimal example:
 
-```fortran
-program test
-  use tester
-  implicit none
+	program test
+	  use tester
+	  implicit none
 
-  type(tester_t) :: my_tester
+	  type(tester_t) :: my_tester
 
-  call my_tester% init()
+	  call my_tester% init()
 
-  call my_tester% assert_equal(1, 2, fail=.true.)
+	  call my_tester% assert_equal(1, 2, fail=.true.)
 
-  call my_tester% print()
+	  call my_tester% print()
 
-end program test
-```
+	end program test
 
 If none of the tests fail, the `print` method displays the message
 `fortran_tester: all tests succeeded`.
