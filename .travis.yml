@@ -2,12 +2,10 @@ language: c
 dist: trusty
 
 deploy:
-  - provider: pages
-  - skip-cleanup: true
-  - github-token: $GITHUB_TOKEN
-  - local-dir: doc
-  - target-branch: gh-pages
-  - all_branches: true
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  local-dir: doc
 
 sudo: false
 
