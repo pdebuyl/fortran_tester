@@ -5,8 +5,6 @@ deploy:
   - provider: pages
   - skip-cleanup: true
   - github-token: $GITHUB_TOKEN
-  - on:
-    branch: gh-pages
   - local-dir: doc
 
 sudo: false
