@@ -6,8 +6,8 @@ deploy:
   - skip-cleanup: true
   - github-token: $GITHUB_TOKEN
   - local-dir: doc
-  - on:
-    branch: with_coverage
+  - target-branch: gh-pages
+  - all_branches: true
 
 sudo: false
 
