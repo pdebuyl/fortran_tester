@@ -26,6 +26,11 @@ program test_tester_1
   y = cmplx(epsilon(0._rk), 1._rk)
   call test% assert_close(x, y)
 
+  x = cmplx(-1158.1181871905803291, 779.0494065373754893)
+  y = cmplx(-1158.1181871905803291, 779.0494065373754893)
+
+  call test% assert_equal(x, y)
+
   call test% assert_close((0._rk, 1._rk), (1.e-15_rk, 1._rk), fail=.true.)
 
   call test% assert_close((0._rk, 1._rk), (1.e-16_rk, 1_rk), fail=.true.)
@@ -41,6 +46,11 @@ program test_tester_1
   d = d + cmplx(0, 0.1)
 
   call test% assert_close(c, d, fail=.true.)
+
+  c = cmplx(1154274.4026509234681726, -461087.8365501734078862)
+  d = cmplx(1154274.4026509234681726, -461087.8365501734078862)
+
+  call test% assert_equal(c, d)
 
   a = -10
   b = -10
