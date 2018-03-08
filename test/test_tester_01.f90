@@ -34,6 +34,12 @@ program test_tester_1
 
   call test% assert_equal(1.0, 1.0)
 
+  call test% assert_equal( &
+       [7.2936402920067644, 3.0975232096437191, 9.2077205929200456, &
+       9.0014871205366358], &
+       [7.2936402920067644, 3.0975232096437191, 9.2077205929200456, &
+       9.0014871205366358])
+
   call test% assert_equal(1.0, -10.0, fail=.true.)
 
   call test% assert_close(1.d0, (1.d0+1.d-16))
