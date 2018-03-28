@@ -26,6 +26,7 @@ module tester
    contains
      procedure :: init                           !< Initialize the tester.
      procedure :: print                          !< Print tests results.
+     procedure :: print_progress                 !< Print partial test results.
      generic, public :: assert_equal =>     &
                         assert_equal_i8,    &
                         assert_equal_i16,   &
@@ -156,6 +157,18 @@ contains
     end if
 
   end subroutine print
+
+
+  !> Print partial information on tests results. Useful to track down where a probleb occurred.
+  subroutine print_progress(this, label)
+    class(tester_t),  intent(in) :: this  !< The tester.
+    character(len=*), intent(in) :: label !< Label representing current state.
+
+
+    write(*,*) 'fortran_tester: test "', label, '" completed.'
+    write(*,*) '                Currently ', this% n_errors, ' error(s) for', this% n_tests, 'test(s)'
+
+  end subroutine print_progress
 
   !> Check if two integers (8 bits) are equal.
   subroutine assert_equal_i8(this, i1, i2, fail)
