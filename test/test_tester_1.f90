@@ -18,6 +18,8 @@ program test_tester_1
 
   call test% assert_equal(.true., 2 > 1)
 
+  call test% print_progress("assert_equal")
+
   call test% assert_close(1.d0, (1.d0+1.d-16))
 
   call test% assert_close(1.d0, (1.d0+1.d-15), fail=.true.)
@@ -31,6 +33,8 @@ program test_tester_1
   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0, 3.d0], fail=.true.)
 
   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0])
+  
+  call test% print_progress("assert_close")
 
   call test% print()
 
