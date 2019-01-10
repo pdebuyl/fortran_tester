@@ -38,9 +38,7 @@ set -C # noclobber
 
 mkdir -p build
 cd build
-cmake ../
+cmake ../ -DBUILD_TESTING=ON
 cmake --build .
-for t in $( find ./ -type f -executable -print ); do
-  $t
-done
+ctest -V
 cd ../
