@@ -2,11 +2,16 @@
 # as fortran_tester::fortran_tester to a package config file
 # for fortran_tester
 #
+# usage:
+#     find_package(fortran_tester)
+#     ...
+#     target_link_libraries(<target> fortran_tester)
+#
 # the config file is generatet in the build and install directories
 
 cmake_minimum_required(VERSION 3.10...3.11)
 
-project(fortran_tester Fortran)
+project(fortran_tester LANGUAGES Fortran)
 
 set(CMAKE_Fortran_MODULE_DIRECTORY "modules")
 
