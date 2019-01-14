@@ -1,6 +1,6 @@
 set(LIB fortran_tester)
 add_library(${LIB} tester.f90)
-add_library(${NAMESPACE}::${LIB} ALIAS ${LIB})
+add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
 target_include_directories(${LIB}
     INTERFACE
