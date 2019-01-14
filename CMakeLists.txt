@@ -9,7 +9,7 @@
 #
 # the config file is generatet in the build and install directories
 
-cmake_minimum_required(VERSION 3.10...3.11)
+cmake_minimum_required(VERSION 3.10...3.13)
 
 project(fortran_tester LANGUAGES Fortran)
 
@@ -54,14 +54,14 @@ export(EXPORT ${TARGETS_EXPORT_NAME}
 
 #create package config
 include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/${project_config}.in ${cmake_files_dir}/${project_config}
+configure_package_config_file(cmake/PackageConfig.cmake.in ${cmake_files_dir}/${project_config}
     INSTALL_DESTINATION ${config_install_dir}
 )
 install(FILES ${cmake_files_dir}/${project_config}
     DESTINATION ${config_install_dir}
 )
 
-configure_package_config_file(cmake/${project_config}.in ${config_build_dir}/${project_config}
+configure_package_config_file(cmake/PackageConfig.cmake.in ${config_build_dir}/${project_config}
     INSTALL_DESTINATION ${config_build_dir}
     INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}
 )
