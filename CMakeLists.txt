@@ -33,7 +33,7 @@ include(GNUInstallDirs)
 set(project_config "${PROJECT_NAME}-config.cmake")
 set(cmake_files_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles")
 set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
-set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/cmake/${PROJECT_NAME}")
+set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/cmake")
 
 # export targets for install
 install(EXPORT ${TARGETS_EXPORT_NAME}
