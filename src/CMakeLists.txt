@@ -4,13 +4,13 @@ add_library(${NAMESPACE}${LIB} ALIAS ${LIB})
 
 target_include_directories(${LIB}
     INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_Fortran_MODULE_DIRECTORY}>
+        $<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}>
 )
 
 # installation and export of targets
 include(GNUInstallDirs)
 
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_Fortran_MODULE_DIRECTORY}/
+install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
     COMPONENT Developement
 )
