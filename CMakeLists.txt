@@ -9,7 +9,7 @@
 #
 # the config file is generatet in the build and install directories
 
-cmake_minimum_required(VERSION 3.10...3.13)
+cmake_minimum_required(VERSION 3.1...3.13)
 
 project(fortran_tester LANGUAGES Fortran)
 
