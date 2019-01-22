@@ -2,6 +2,7 @@
 ! Copyright 2015 Pierre de Buyl and Peter Colberg
 !           2016 Pierre de Buyl and Stefano Szaghi
 !           2018 Pierre de Buyl and Pietro Bonfa
+!           2019 Pierre de Buyl and Elias Lettl
 ! License: BSD
 
 !> Routines to test Fortran programs
