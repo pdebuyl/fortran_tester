@@ -28,7 +28,7 @@ install:
   - make VERBOSE=1
   - cd ..
   - mkdir build_coverage && cd build_coverage
-  - cmake .. -DCMAKE_Fortran_FLAGS='--coverage' -DWITH_DOXYGEN=ON
+  - cmake .. -DCMAKE_Fortran_FLAGS='--coverage'
   - make
   - make test
   - make doc
