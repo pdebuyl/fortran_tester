@@ -11,9 +11,9 @@ target_include_directories(${LIB}
 include(GNUInstallDirs)
 
 # installation and export of targets
-install(DIRECTORY ${CMAKE_Fortran_MODULE_DIRECTORY}/
+install(DIRECTORY "${CMAKE_Fortran_MODULE_DIRECTORY}/"
     DESTINATION
-        ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
     COMPONENT
         ${PROJECT_NAME}_Developement
 )
@@ -30,6 +30,6 @@ install(TARGETS ${LIB} EXPORT ${TARGETS_EXPORT_NAME}
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT ${PROJECT_NAME}_Runtime
     INCLUDES
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}"
         COMPONENT ${PROJECT_NAME}_Development
 )

@@ -36,6 +36,7 @@ if(Doxygen_FOUND)
     )
 endif()
 
+# set export variables needed in subdirectories
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}-targets")
 set(NAMESPACE "${PROJECT_NAME}::")
 
@@ -70,7 +71,7 @@ set(project_config_version "${PROJECT_NAME}-config-version.cmake")
 set(cmake_files_dir "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles")
 set(default_config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(config_build_dir "${CMAKE_CURRENT_BINARY_DIR}/${default_config_install_dir}")
-set(${PROJECT_NAME}_INSTALL_CMAKEDIR ${default_config_install_dir} CACHE PATH "Path to the cmake files for Project ${PROJECT_NAME}")
+set(${PROJECT_NAME}_INSTALL_CMAKEDIR ${default_config_install_dir} CACHE PATH "Path into which the cmake files for project ${PROJECT_NAME} will be installed.")
 
 # export targets for install
 install(EXPORT ${TARGETS_EXPORT_NAME}
@@ -104,7 +105,7 @@ configure_package_config_file(cmake/PackageConfig.cmake.in "${config_build_dir}/
 )
 
 # write_basic_package_version_file(
-#     ${project_config_version}
+#     "${config_build_dir}/${project_config_version}"
 #     VERSION ${PROJECT_VERSION}
 #     COMPATIBILITY SameMajorVersion
 # )
@@ -112,7 +113,7 @@ configure_package_config_file(cmake/PackageConfig.cmake.in "${config_build_dir}/
 install(
     FILES
         "${cmake_files_dir}/${project_config}"
-        # ${CMAKE_CURRENT_BINARY_DIR}/${project_config_version}
+        # "${config_build_dir}/${project_config_version}"
     DESTINATION
         ${${PROJECT_NAME}_INSTALL_CMAKEDIR}
     COMPONENT
