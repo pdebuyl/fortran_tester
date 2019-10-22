@@ -16,7 +16,7 @@
 # the options fortran_tester_BUILD_TESTING and BUILT_TESTING
 # afterwards the tests can be run with ctest
 
-cmake_minimum_required(VERSION 3.1...3.13)
+cmake_minimum_required(VERSION 3.1...3.15)
 
 project(fortran_tester LANGUAGES Fortran)
 
