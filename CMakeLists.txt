@@ -25,24 +25,13 @@ SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 set(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
 
-# build documentation
-find_package(Doxygen QUIET)
-if(Doxygen_FOUND)
-    add_custom_target(doc
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
-        COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
-        DEPENDS ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    )
-endif()
-
 # set export variables needed in subdirectories
 set(TARGETS_EXPORT_NAME "${PROJECT_NAME}-targets")
 set(NAMESPACE "${PROJECT_NAME}::")
 
 add_subdirectory(src)
 
-# testing
+# testing and documentation
 if(${PROJECT_SOURCE_DIR} STREQUAL ${CMAKE_SOURCE_DIR})
     set(main_project TRUE)
     option(BUILD_TESTING "Build the testing tree." ON)
@@ -59,9 +48,27 @@ else()
     )
 endif()
 
+# testing
 if((main_project OR BUILD_TESTING_${PROJECT_NAME}) AND BUILD_TESTING)
     enable_testing()
     add_subdirectory(test)
+endif()
+
+# documentation
+if(main_project)
+    set(doc doc)
+else()
+    set(doc ${NAMESPACE}doc)
+endif()
+
+find_package(Doxygen QUIET)
+if(Doxygen_FOUND)
+    add_custom_target(${doc}
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
+        COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
+        DEPENDS ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
 endif()
 
 # generate package config files
