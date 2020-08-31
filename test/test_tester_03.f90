@@ -21,7 +21,7 @@ program test_tester_1
   call test% assert_close(cmplx(1., epsilon(0.)), (1., 0.))
 
   x = (0._rk, 1._rk)
-  y = cmplx(epsilon(0._rk), 1._rk)
+  y = cmplx(epsilon(0._rk), 1._rk, kind=rk)
   call test% assert_close(x, y)
 
   x = cmplx(-1158.1181871905803291, 779.0494065373754893)
@@ -50,7 +50,7 @@ program test_tester_1
 
   call test% assert_close(a, b)
 
-  b(1) = b(1) + cmplx(0._rk, epsilon(real(b(1))))
+  b(1) = b(1) + cmplx(0._rk, epsilon(real(b(1))), kind=rk)
 
   call test% assert_close(a, b)
 
