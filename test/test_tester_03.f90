@@ -14,8 +14,6 @@ program test_tester_1
 
   call test% init()
 
-  call test% assert_equal((1, 1), (2, 2), fail=.true.)
-
   call test% assert_equal((1234, -1234), (1234, -1234))
 
   call test% assert_close((1._rk, 0._rk), (1._rk, 0._rk))
@@ -31,21 +29,11 @@ program test_tester_1
 
   call test% assert_equal(x, y)
 
-  call test% assert_close((0._rk, 1._rk), (1.e-15_rk, 1._rk), fail=.true.)
-
-  call test% assert_close((0._rk, 1._rk), (1.e-16_rk, 1_rk), fail=.true.)
-
-  call test% assert_close((1., 0.), (1., 1.e-6), fail=.true.)
-
   c = 1
   d = 1
   d = d + cmplx(0, epsilon(0.))
 
   call test% assert_close(c, d)
-
-  d = d + cmplx(0, 0.1)
-
-  call test% assert_close(c, d, fail=.true.)
 
   c = cmplx(1154274.4026509234681726, -461087.8365501734078862)
   d = cmplx(1154274.4026509234681726, -461087.8365501734078862)
@@ -57,9 +45,6 @@ program test_tester_1
 
   call test% assert_equal(a, b)
 
-  b = cmplx(10, 20)
-  call test% assert_equal(a, b, fail=.true.)
-
   a = 0
   b = epsilon(0._rk)
 
@@ -68,10 +53,6 @@ program test_tester_1
   b(1) = b(1) + cmplx(0._rk, epsilon(real(b(1))))
 
   call test% assert_close(a, b)
-
-  b = b + (0._rk, 1e-5_rk)
-
-  call test% assert_close(a, b, fail=.true.)
 
   call test% print()
 
