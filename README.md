@@ -27,7 +27,7 @@ use as an automated test.
 **Author:** Pierre de Buyl  
 **License:** BSD
 
-Contributors: Peter Colberg, Stefano Szaghi, Pietro Bonfa, Elias Lettl
+Contributors: Peter Colberg, Stefano Szaghi, Pietro Bonfa, Elias Lettl, Giacomo Rossi
 
 ## Installation
 
