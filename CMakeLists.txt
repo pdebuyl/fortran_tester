@@ -55,15 +55,9 @@ if((main_project OR BUILD_TESTING_${PROJECT_NAME}) AND BUILD_TESTING)
 endif()
 
 # documentation
-if(main_project)
-    set(doc doc)
-else()
-    set(doc ${NAMESPACE}doc)
-endif()
-
 find_package(Doxygen QUIET)
 if(Doxygen_FOUND)
-    add_custom_target(${doc}
+    add_custom_target(doc
         COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
         COMMAND ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
         DEPENDS ${DOXYGEN_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/doc/doxygen_conf"
