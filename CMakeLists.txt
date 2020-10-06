@@ -58,7 +58,7 @@ endif()
 if(main_project)
     set(doc doc)
 else()
-    set(doc ${NAMESPACE}doc)
+    set(doc ${PROJECT_NAME}_doc)
 endif()
 
 find_package(Doxygen QUIET)
