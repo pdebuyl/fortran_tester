@@ -13,7 +13,7 @@ A minimal example:
 
 	  call my_tester% init()
 
-	  call my_tester% assert_equal(1, 2, fail=.true.)
+	  call my_tester% assert_equal(1+1, 2)
 
 	  call my_tester% print()
 
@@ -27,7 +27,8 @@ use as an automated test.
 **Author:** Pierre de Buyl  
 **License:** BSD
 
-Contributors: Peter Colberg, Stefano Szaghi, Pietro Bonfa, Elias Lettl, Giacomo Rossi
+Contributors: Peter Colberg, Stefano Szaghi, Pietro Bonfa, Elias Lettl, Giacomo Rossi,
+Peter Hill
 
 ## Installation
 
