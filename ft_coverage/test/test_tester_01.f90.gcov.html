@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - ft_coverage.info - test/test_tester_01.f90</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">test</a> - test_tester_01.f90<span style="font-size: 80%;"> (source / <a href="test_tester_01.f90.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">ft_coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntry">30</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-10-07</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : ! This file is part of fortran_tester</a>
+<span class="lineNum">       2 </span>            : ! Copyright 2015 Pierre de Buyl
+<a name="3"><span class="lineNum">       3 </span>            : ! License: BSD</a>
+<a name="4"><span class="lineNum">       4 </span>            : </a>
+<span class="lineNum">       5 </span><span class="lineCov">          1 : program test_tester_1</span>
+<span class="lineNum">       6 </span><span class="lineCov">          1 :   use tester</span>
+<span class="lineNum">       7 </span>            :   implicit none
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            :   integer, parameter :: long_k = selected_int_kind(18)
+<span class="lineNum">      10 </span>            :   double precision :: pi = 4*atan(1.d0)
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            :   type(tester_t) :: test
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">          1 :   call test% init()</span>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">          1 :   call test% assert_equal(-121, -11**2)</span>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">          1 :   call test% assert_equal([1, -10, 1899010], [1, -10, 1899010])</span>
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :   call test% assert_equal([0.2420243742417814d0, 0.4924788296716989d0, &amp;
+<span class="lineNum">      21 </span>            :        0.8541147722227219d0, 0.267520651034313d0 , 0.6948550035165076d0], &amp;
+<span class="lineNum">      22 </span>            :        [0.2420243742417814d0, 0.4924788296716989d0, &amp;
+<span class="lineNum">      23 </span><span class="lineCov">          1 :        0.8541147722227219d0, 0.267520651034313d0 , 0.6948550035165076d0])</span>
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">          1 :   call test% assert_close(0.d0, sin(pi))</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">          1 :   call test% assert_equal(0.d0, 0*1.d0)</span>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          1 :   call test% assert_equal(.true., 2 &gt; 1)</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          1 :   call test% assert_equal(1.0, 1.0)</span>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   call test% assert_equal( &amp;
+<span class="lineNum">      34 </span>            :        [7.2936402920067644, 3.0975232096437191, 9.2077205929200456, &amp;
+<span class="lineNum">      35 </span>            :        9.0014871205366358], &amp;
+<span class="lineNum">      36 </span>            :        [7.2936402920067644, 3.0975232096437191, 9.2077205929200456, &amp;
+<span class="lineNum">      37 </span><span class="lineCov">          1 :        9.0014871205366358])</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span><span class="lineCov">          1 :   call test% assert_close(1.d0, (1.d0+1.d-16))</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          1 :   call test% assert_close(1., (1.+1.e-7))</span>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            :   call test% assert_close([ 0.58557761, 0.04035789, 0.30463428, &amp;
+<span class="lineNum">      44 </span>            :        0.57437861, 0.4879709 , 0.00986957], &amp;
+<span class="lineNum">      45 </span>            :        [ 0.58557761+epsilon(1.0), 0.04035789, 0.30463428+2*epsilon(1.0), &amp;
+<span class="lineNum">      46 </span><span class="lineCov">          1 :        0.57437861, 0.4879709 , 0.00986957-epsilon(1.0)])</span>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">          1 :   call test% assert_close([1.d0, 2.d0], [1.d0, 2.d0])</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">          1 :   call test% assert_positive(epsilon(1.))</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :   call test% assert_positive(0.1)</span>
+<span class="lineNum">      52 </span><span class="lineCov">          1 :   call test% assert_positive(0.1d0)</span>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">          1 :   call test% assert_positive([1., 2., 0.])</span>
+<span class="lineNum">      55 </span><span class="lineCov">          1 :   call test% assert_positive([1.d0, huge(1.d0)])</span>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">          1 :   call test% assert_equal(1, 1)</span>
+<span class="lineNum">      58 </span><span class="lineCov">          1 :   call test% assert_equal(1_long_k, 1_long_k)</span>
+<span class="lineNum">      59 </span><span class="lineCov">          1 :   call test% assert_equal([1, -huge(1), huge(1), 0], [1, -huge(1), huge(1), 0])</span>
+<span class="lineNum">      60 </span>            :   call test% assert_equal([1_long_k, -huge(1_long_k), huge(1_long_k), 0_long_k], &amp;
+<span class="lineNum">      61 </span><span class="lineCov">          1 :        [1_long_k, -huge(1_long_k), huge(1_long_k), 0_long_k])</span>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineCov">          1 :   call test% assert_positive(2**30)</span>
+<span class="lineNum">      64 </span><span class="lineCov">          1 :   call test% assert_positive(2_long_k**62)</span>
+<span class="lineNum">      65 </span><span class="lineCov">          1 :   call test% assert_positive([2**30, 1, 0])</span>
+<span class="lineNum">      66 </span><span class="lineCov">          1 :   call test% assert_positive([2_long_k**62, 1_long_k, 0_long_k])</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineCov">          1 :   call test% print()</span>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          1 : end program test_tester_1</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

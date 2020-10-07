@@ -1,0 +1,796 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - ft_coverage.info - src/tester.f90</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">src</a> - tester.f90<span style="font-size: 80%;"> (source / <a href="tester.f90.func.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">ft_coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">171</td>
+            <td class="headerCovTableEntry">240</td>
+            <td class="headerCovTableEntryLo">71.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2020-10-07</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntryMed">87.8 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : ! This file is part of fortran_tester</a>
+<span class="lineNum">       2 </span>            : ! Copyright 2015-2020 Pierre de Buyl and contributors
+<span class="lineNum">       3 </span>            : ! License: BSD
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span>            : !&gt; Routines to test Fortran programs
+<span class="lineNum">       6 </span>            : !!
+<span class="lineNum">       7 </span>            : !! fortran_tester is a pure-Fortran module. It provides a datatype to hold test results and
+<span class="lineNum">       8 </span>            : !! routines to test for equality, closeness, and positivity of variables. The routines are
+<span class="lineNum">       9 </span>            : !! overloaded and the resulting interface consists of a small number of names.
+<span class="lineNum">      10 </span>            : 
+<span class="lineNum">      11 </span>            : module tester
+<span class="lineNum">      12 </span>            :   use, intrinsic :: iso_fortran_env, only : int8, int16, int32, int64, real32, real64
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span>            :   implicit none
+<span class="lineNum">      15 </span>            :   private
+<span class="lineNum">      16 </span>            :   public :: tester_t
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :   !&gt; The main **tester** class.
+<span class="lineNum">      19 </span>            :   type :: tester_t
+<span class="lineNum">      20 </span>            :      integer(int32) :: n_errors=0_int32                         !&lt; Number of errors.
+<span class="lineNum">      21 </span>            :      integer(int32) :: n_tests=0_int32                          !&lt; Number of tests.
+<span class="lineNum">      22 </span>            :      real(real32)   :: tolerance32=2._real32*epsilon(1._real32) !&lt; Real tolerance, 32 bits.
+<span class="lineNum">      23 </span>            :      real(real64)   :: tolerance64=2._real64*epsilon(1._real64) !&lt; Real tolerance, 64 bits.
+<span class="lineNum">      24 </span>            :    contains
+<span class="lineNum">      25 </span>            :      procedure :: init                           !&lt; Initialize the tester.
+<span class="lineNum">      26 </span>            :      procedure :: print                          !&lt; Print tests results.
+<span class="lineNum">      27 </span>            :      generic, public :: assert_equal =&gt;     &amp;
+<span class="lineNum">      28 </span>            :                         assert_equal_i8,    &amp;
+<span class="lineNum">      29 </span>            :                         assert_equal_i16,   &amp;
+<span class="lineNum">      30 </span>            :                         assert_equal_i32,   &amp;
+<span class="lineNum">      31 </span>            :                         assert_equal_i64,   &amp;
+<span class="lineNum">      32 </span>            :                         assert_equal_r32,   &amp;
+<span class="lineNum">      33 </span>            :                         assert_equal_r64,   &amp;
+<span class="lineNum">      34 </span>            :                         assert_equal_c32,   &amp;
+<span class="lineNum">      35 </span>            :                         assert_equal_c64,   &amp;
+<span class="lineNum">      36 </span>            :                         assert_equal_l,     &amp;
+<span class="lineNum">      37 </span>            :                         assert_equal_i8_1,  &amp;
+<span class="lineNum">      38 </span>            :                         assert_equal_i16_1, &amp;
+<span class="lineNum">      39 </span>            :                         assert_equal_i32_1, &amp;
+<span class="lineNum">      40 </span>            :                         assert_equal_i64_1, &amp;
+<span class="lineNum">      41 </span>            :                         assert_equal_r32_1, &amp;
+<span class="lineNum">      42 </span>            :                         assert_equal_r64_1, &amp;
+<span class="lineNum">      43 </span>            :                         assert_equal_c32_1, &amp;
+<span class="lineNum">      44 </span>            :                         assert_equal_c64_1, &amp;
+<span class="lineNum">      45 </span>            :                         assert_equal_l_1         !&lt; Check if two values (integer, real, complex or logical) are equal.
+<span class="lineNum">      46 </span>            :      procedure, private :: assert_equal_i8       !&lt; Check if two integers (8  bits) are equal.
+<span class="lineNum">      47 </span>            :      procedure, private :: assert_equal_i16      !&lt; Check if two integers (16 bits) are equal.
+<span class="lineNum">      48 </span>            :      procedure, private :: assert_equal_i32      !&lt; Check if two integers (32 bits) are equal.
+<span class="lineNum">      49 </span>            :      procedure, private :: assert_equal_i64      !&lt; Check if two integers (64 bits) are equal.
+<span class="lineNum">      50 </span>            :      procedure, private :: assert_equal_r32      !&lt; Check if two reals (32 bits) are equal.
+<span class="lineNum">      51 </span>            :      procedure, private :: assert_equal_r64      !&lt; Check if two reals (64 bits) are equal.
+<span class="lineNum">      52 </span>            :      procedure, private :: assert_equal_c32      !&lt; Check if two complex numbers (32 bits) are equal.
+<span class="lineNum">      53 </span>            :      procedure, private :: assert_equal_c64      !&lt; Check if two complex numbers (64 bits) are equal.
+<span class="lineNum">      54 </span>            :      procedure, private :: assert_equal_l        !&lt; Check if two logicals are equal.
+<span class="lineNum">      55 </span>            :      procedure, private :: assert_equal_i8_1     !&lt; Check if two integer (8  bits) arrays (rank 1) are equal.
+<span class="lineNum">      56 </span>            :      procedure, private :: assert_equal_i16_1    !&lt; Check if two integer (16 bits) arrays (rank 1) are equal.
+<span class="lineNum">      57 </span>            :      procedure, private :: assert_equal_i32_1    !&lt; Check if two integer (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">      58 </span>            :      procedure, private :: assert_equal_i64_1    !&lt; Check if two integer (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">      59 </span>            :      procedure, private :: assert_equal_r32_1    !&lt; Check if two real (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">      60 </span>            :      procedure, private :: assert_equal_r64_1    !&lt; Check if two real (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">      61 </span>            :      procedure, private :: assert_equal_c32_1    !&lt; Check if two complex (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">      62 </span>            :      procedure, private :: assert_equal_c64_1    !&lt; Check if two complex (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">      63 </span>            :      procedure, private :: assert_equal_l_1      !&lt; Check if two logical arrays (rank 1) are equal.
+<span class="lineNum">      64 </span>            :      generic, public :: assert_positive =&gt;     &amp;
+<span class="lineNum">      65 </span>            :                         assert_positive_i8,    &amp;
+<span class="lineNum">      66 </span>            :                         assert_positive_i16,   &amp;
+<span class="lineNum">      67 </span>            :                         assert_positive_i32,   &amp;
+<span class="lineNum">      68 </span>            :                         assert_positive_i64,   &amp;
+<span class="lineNum">      69 </span>            :                         assert_positive_r32,   &amp;
+<span class="lineNum">      70 </span>            :                         assert_positive_r64,   &amp;
+<span class="lineNum">      71 </span>            :                         assert_positive_i8_1,  &amp;
+<span class="lineNum">      72 </span>            :                         assert_positive_i16_1, &amp;
+<span class="lineNum">      73 </span>            :                         assert_positive_i32_1, &amp;
+<span class="lineNum">      74 </span>            :                         assert_positive_i64_1, &amp;
+<span class="lineNum">      75 </span>            :                         assert_positive_r32_1, &amp;
+<span class="lineNum">      76 </span>            :                         assert_positive_r64_1    !&lt; Check if a number (integer or real) is positive.
+<span class="lineNum">      77 </span>            :      procedure, private :: assert_positive_i8    !&lt; Check if a integer (8  bits) is positive.
+<span class="lineNum">      78 </span>            :      procedure, private :: assert_positive_i16   !&lt; Check if a integer (16 bits) is positive.
+<span class="lineNum">      79 </span>            :      procedure, private :: assert_positive_i32   !&lt; Check if a integer (32 bits) is positive.
+<span class="lineNum">      80 </span>            :      procedure, private :: assert_positive_i64   !&lt; Check if a integer (64 bits) is positive.
+<span class="lineNum">      81 </span>            :      procedure, private :: assert_positive_r32   !&lt; Check if a real (32 bits) is positive.
+<span class="lineNum">      82 </span>            :      procedure, private :: assert_positive_r64   !&lt; Check if a real (64 bits) is positive.
+<span class="lineNum">      83 </span>            :      procedure, private :: assert_positive_i8_1  !&lt; Check if a integer (8  bits) array (rank 1) is positive.
+<span class="lineNum">      84 </span>            :      procedure, private :: assert_positive_i16_1 !&lt; Check if a integer (16 bits) array (rank 1) is positive.
+<span class="lineNum">      85 </span>            :      procedure, private :: assert_positive_i32_1 !&lt; Check if a integer (32 bits) array (rank 1) is positive.
+<span class="lineNum">      86 </span>            :      procedure, private :: assert_positive_i64_1 !&lt; Check if a integer (64 bits) array (rank 1) is positive.
+<span class="lineNum">      87 </span>            :      procedure, private :: assert_positive_r32_1 !&lt; Check if a real (32 bits) array (rank 1) is positive.
+<span class="lineNum">      88 </span>            :      procedure, private :: assert_positive_r64_1 !&lt; Check if a real (64 bits) array (rank 1) is positive.
+<span class="lineNum">      89 </span>            :      generic, public :: assert_close =&gt;     &amp;
+<span class="lineNum">      90 </span>            :                         assert_close_r32,   &amp;
+<span class="lineNum">      91 </span>            :                         assert_close_r64,   &amp;
+<span class="lineNum">      92 </span>            :                         assert_close_c32,   &amp;
+<span class="lineNum">      93 </span>            :                         assert_close_c64,   &amp;
+<span class="lineNum">      94 </span>            :                         assert_close_r32_1, &amp;
+<span class="lineNum">      95 </span>            :                         assert_close_r64_1, &amp;
+<span class="lineNum">      96 </span>            :                         assert_close_c32_1, &amp;
+<span class="lineNum">      97 </span>            :                         assert_close_c64_1       !&lt; Check if two values (real or complex) are close with respect a tolerance.
+<span class="lineNum">      98 </span>            :      procedure, private :: assert_close_r32      !&lt; Check if two reals (32 bits) are close with respect a tolerance.
+<span class="lineNum">      99 </span>            :      procedure, private :: assert_close_r64      !&lt; Check if two reals (64 bits) are close with respect a tolerance.
+<span class="lineNum">     100 </span>            :      procedure, private :: assert_close_c32      !&lt; Check if two complex numbers (32 bits) are close with respect a tolerance.
+<span class="lineNum">     101 </span>            :      procedure, private :: assert_close_c64      !&lt; Check if two complex numbers (64 bits) are close with respect a tolerance.
+<span class="lineNum">     102 </span>            :      procedure, private :: assert_close_r32_1    !&lt; Check if two real (32 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     103 </span>            :      procedure, private :: assert_close_r64_1    !&lt; Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     104 </span>            :      procedure, private :: assert_close_c32_1    !&lt; Check if two complex (32 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     105 </span>            :      procedure, private :: assert_close_c64_1    !&lt; Check if two complex (64 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     106 </span>            :   end type tester_t
+<span class="lineNum">     107 </span>            : 
+<span class="lineNum">     108 </span>            : contains
+<a name="109"><span class="lineNum">     109 </span>            : </a>
+<a name="110"><span class="lineNum">     110 </span>            :   !&gt; Initialize the tester.</a>
+<span class="lineNum">     111 </span><span class="lineCov">          9 :   subroutine init(this, tolerance32, tolerance64)</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :     class(tester_t), intent(out)          :: this        !&lt; The tester.</span>
+<span class="lineNum">     113 </span>            :     real(real32),    intent(in), optional :: tolerance32 !&lt; Real tolerance, 32 bits.
+<span class="lineNum">     114 </span>            :     real(real64),    intent(in), optional :: tolerance64 !&lt; Real tolerance, 64 bits.
+<span class="lineNum">     115 </span>            : 
+<span class="lineNum">     116 </span><span class="lineCov">          9 :     this% n_errors = 0</span>
+<span class="lineNum">     117 </span><span class="lineCov">          9 :     this% n_tests = 0</span>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">          9 :     if (present(tolerance64)) then</span>
+<span class="lineNum">     120 </span><span class="lineNoCov">          0 :        this% tolerance64 = tolerance64</span>
+<span class="lineNum">     121 </span>            :     else
+<span class="lineNum">     122 </span><span class="lineCov">          9 :        this% tolerance64 = 2._real64*epsilon(1._real64)</span>
+<span class="lineNum">     123 </span>            :     end if
+<span class="lineNum">     124 </span>            : 
+<span class="lineNum">     125 </span><span class="lineCov">          9 :     if (present(tolerance32)) then</span>
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :        this% tolerance32 = tolerance32</span>
+<span class="lineNum">     127 </span>            :     else
+<span class="lineNum">     128 </span><span class="lineCov">          9 :        this% tolerance32 = 2._real32*epsilon(1._real32)</span>
+<span class="lineNum">     129 </span>            :     end if
+<span class="lineNum">     130 </span>            : 
+<span class="lineNum">     131 </span><span class="lineCov">          9 :   end subroutine init</span>
+<a name="132"><span class="lineNum">     132 </span>            : </a>
+<span class="lineNum">     133 </span>            :   !&gt; Print tests results.
+<span class="lineNum">     134 </span><span class="lineCov">          9 :   subroutine print(this, errorstop)</span>
+<span class="lineNum">     135 </span>            :     class(tester_t), intent(in)           :: this      !&lt; The tester.
+<span class="lineNum">     136 </span>            :     logical,         intent(in), optional :: errorstop !&lt; Flag to activate error stop if one test fails.
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            :     logical :: do_errorstop
+<span class="lineNum">     139 </span><span class="lineCov">          9 :     if (present(errorstop)) then</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :        do_errorstop = errorstop</span>
+<span class="lineNum">     141 </span>            :     else
+<span class="lineNum">     142 </span><span class="lineCov">          9 :        do_errorstop = .true.</span>
+<span class="lineNum">     143 </span>            :     end if
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span><span class="lineCov">          9 :     write(*,*) 'fortran_tester:', this% n_errors, ' error(s) for', this% n_tests, 'test(s)'</span>
+<span class="lineNum">     146 </span>            : 
+<span class="lineNum">     147 </span><span class="lineCov">          9 :     if (this% n_errors == 0) then</span>
+<span class="lineNum">     148 </span><span class="lineCov">          5 :        write(*,*) 'fortran_tester: all tests succeeded'</span>
+<span class="lineNum">     149 </span>            :     else
+<span class="lineNum">     150 </span><span class="lineCov">          4 :        write(*,*) 'fortran_tester: tests failed'</span>
+<span class="lineNum">     151 </span><span class="lineCov">          4 :        if (do_errorstop) then</span>
+<span class="lineNum">     152 </span><span class="lineCov">          4 :           stop 1</span>
+<span class="lineNum">     153 </span>            :        end if
+<span class="lineNum">     154 </span>            :     end if
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineCov">          5 :   end subroutine print</span>
+<a name="157"><span class="lineNum">     157 </span>            : </a>
+<span class="lineNum">     158 </span>            :   !&gt; Check if two integers (8 bits) are equal.
+<span class="lineNum">     159 </span><span class="lineNoCov">          0 :   subroutine assert_equal_i8(this, i1, i2)</span>
+<span class="lineNum">     160 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     161 </span>            :     integer(int8),   intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     162 </span>            :     integer(int8),   intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     163 </span>            : 
+<span class="lineNum">     164 </span><span class="lineNoCov">          0 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 :     if (i1 .ne. i2) then</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     167 </span>            :     end if
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :   end subroutine assert_equal_i8</span>
+<a name="170"><span class="lineNum">     170 </span>            : </a>
+<span class="lineNum">     171 </span>            :   !&gt; Check if two integers (16 bits) are equal.
+<span class="lineNum">     172 </span><span class="lineCov">          1 :   subroutine assert_equal_i16(this, i1, i2)</span>
+<span class="lineNum">     173 </span>            :     class(tester_t), intent(inout)        :: this   !&lt; The tester.
+<span class="lineNum">     174 </span>            :     integer(int16),  intent(in)           :: i1     !&lt; Value to compare.
+<span class="lineNum">     175 </span>            :     integer(int16),  intent(in)           :: i2     !&lt; Value to compare.
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     178 </span><span class="lineCov">          1 :     if (i1 .ne. i2) then</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     180 </span>            :     end if
+<span class="lineNum">     181 </span>            : 
+<span class="lineNum">     182 </span><span class="lineCov">          1 :   end subroutine assert_equal_i16</span>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<span class="lineNum">     184 </span>            :   !&gt; Check if two integers (32 bits) are equal.
+<span class="lineNum">     185 </span><span class="lineCov">          3 :   subroutine assert_equal_i32(this, i1, i2)</span>
+<span class="lineNum">     186 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     187 </span>            :     integer(int32),  intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     188 </span>            :     integer(int32),  intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineCov">          3 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     191 </span><span class="lineCov">          3 :     if (i1 .ne. i2) then</span>
+<span class="lineNum">     192 </span><span class="lineCov">          1 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     193 </span>            :     end if
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span><span class="lineCov">          3 :   end subroutine assert_equal_i32</span>
+<a name="196"><span class="lineNum">     196 </span>            : </a>
+<span class="lineNum">     197 </span>            :   !&gt; Check if two integers (64 bits) are equal.
+<span class="lineNum">     198 </span><span class="lineCov">          1 :   subroutine assert_equal_i64(this, i1, i2)</span>
+<span class="lineNum">     199 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     200 </span>            :     integer(int64),  intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     201 </span>            :     integer(int64),  intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     204 </span><span class="lineCov">          1 :     if (i1 .ne. i2) then</span>
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     206 </span>            :     end if
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineCov">          1 :   end subroutine assert_equal_i64</span>
+<a name="209"><span class="lineNum">     209 </span>            : </a>
+<span class="lineNum">     210 </span>            :   !&gt; Check if two reals (32 bits) are equal.
+<span class="lineNum">     211 </span><span class="lineCov">          1 :   subroutine assert_equal_r32(this, r1, r2)</span>
+<span class="lineNum">     212 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     213 </span>            :     real(real32),    intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     214 </span>            :     real(real32),    intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     215 </span>            : 
+<span class="lineNum">     216 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     217 </span><span class="lineCov">          1 :     if (r1 .ne. r2) then</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     219 </span>            :     end if
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineCov">          1 :   end subroutine assert_equal_r32</span>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<span class="lineNum">     223 </span>            :   !&gt; Check if two reals (64 bits) are equal.
+<span class="lineNum">     224 </span><span class="lineCov">          1 :   subroutine assert_equal_r64(this, r1, r2)</span>
+<span class="lineNum">     225 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     226 </span>            :     real(real64),    intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     227 </span>            :     real(real64),    intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     230 </span><span class="lineCov">          1 :     if (r1 .ne. r2) then</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     232 </span>            :     end if
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineCov">          1 :   end subroutine assert_equal_r64</span>
+<a name="235"><span class="lineNum">     235 </span>            : </a>
+<span class="lineNum">     236 </span>            :   !&gt; Check if two complex numbers (32 bits) are equal.
+<span class="lineNum">     237 </span><span class="lineCov">          1 :   subroutine assert_equal_c32(this, c1, c2)</span>
+<span class="lineNum">     238 </span>            :     class(tester_t), intent(inout)           :: this !&lt; The tester.
+<span class="lineNum">     239 </span>            :     complex(real32),    intent(in)           :: c1   !&lt; Value to compare.
+<span class="lineNum">     240 </span>            :     complex(real32),    intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     241 </span>            : 
+<span class="lineNum">     242 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     243 </span><span class="lineCov">          1 :     if (c1 .ne. c2) then</span>
+<span class="lineNum">     244 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     245 </span>            :     end if
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineCov">          1 :   end subroutine assert_equal_c32</span>
+<a name="248"><span class="lineNum">     248 </span>            : </a>
+<span class="lineNum">     249 </span>            :   !&gt; Check if two complex numbers (64 bits) are equal.
+<span class="lineNum">     250 </span><span class="lineCov">          1 :   subroutine assert_equal_c64(this, c1, c2)</span>
+<span class="lineNum">     251 </span>            :     class(tester_t), intent(inout)           :: this !&lt; The tester.
+<span class="lineNum">     252 </span>            :     complex(real64),    intent(in)           :: c1   !&lt; Value to compare.
+<span class="lineNum">     253 </span>            :     complex(real64),    intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     256 </span><span class="lineCov">          1 :     if (c1 .ne. c2) then</span>
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     258 </span>            :     end if
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span><span class="lineCov">          1 :   end subroutine assert_equal_c64</span>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<span class="lineNum">     262 </span>            :   !&gt; Check if two logicals are equal.
+<span class="lineNum">     263 </span><span class="lineCov">          2 :  subroutine assert_equal_l(this, l1, l2)</span>
+<span class="lineNum">     264 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     265 </span>            :     logical,         intent(in)           :: l1   !&lt; Value to compare.
+<span class="lineNum">     266 </span>            :     logical,         intent(in)           :: l2   !&lt; Value to compare.
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     269 </span><span class="lineCov">          2 :     if (l1 .neqv. l2) then</span>
+<span class="lineNum">     270 </span><span class="lineCov">          1 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     271 </span>            :     end if
+<span class="lineNum">     272 </span>            : 
+<span class="lineNum">     273 </span><span class="lineCov">          2 :   end subroutine assert_equal_l</span>
+<a name="274"><span class="lineNum">     274 </span>            : </a>
+<span class="lineNum">     275 </span>            :   !&gt; Check if two integer (8 bits) arrays (rank 1) are equal.
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :   subroutine assert_equal_i8_1(this, i1, i2)</span>
+<span class="lineNum">     277 </span>            :     class(tester_t),             intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     278 </span>            :     integer(int8), dimension(:), intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     279 </span>            :     integer(int8), dimension(:), intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span><span class="lineNoCov">          0 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     282 </span>            : 
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :     if ( size(i1) .ne. size(i2) ) then</span>
+<span class="lineNum">     284 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     285 </span>            :     else
+<span class="lineNum">     286 </span><span class="lineNoCov">          0 :        if ( maxval(abs(i1-i2)) &gt; 0 ) then</span>
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     288 </span>            :        end if
+<span class="lineNum">     289 </span>            :     end if
+<span class="lineNum">     290 </span>            : 
+<span class="lineNum">     291 </span><span class="lineNoCov">          0 :   end subroutine assert_equal_i8_1</span>
+<a name="292"><span class="lineNum">     292 </span>            : </a>
+<span class="lineNum">     293 </span>            :   !&gt; Check if two integer (16 bits) arrays (rank 1) are equal.
+<span class="lineNum">     294 </span><span class="lineCov">          1 :   subroutine assert_equal_i16_1(this, i1, i2)</span>
+<span class="lineNum">     295 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     296 </span>            :     integer(int16), dimension(:), intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     297 </span>            :     integer(int16), dimension(:), intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     298 </span>            : 
+<span class="lineNum">     299 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span><span class="lineCov">          1 :     if ( size(i1) .ne. size(i2) ) then</span>
+<span class="lineNum">     302 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     303 </span>            :     else
+<span class="lineNum">     304 </span><span class="lineCov">          1 :        if ( maxval(abs(i1-i2)) &gt; 0 ) then</span>
+<span class="lineNum">     305 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     306 </span>            :        end if
+<span class="lineNum">     307 </span>            :     end if
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span><span class="lineCov">          1 :   end subroutine assert_equal_i16_1</span>
+<a name="310"><span class="lineNum">     310 </span>            : </a>
+<span class="lineNum">     311 </span>            :   !&gt; Check if two integer (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">     312 </span><span class="lineCov">          3 :   subroutine assert_equal_i32_1(this, i1, i2)</span>
+<span class="lineNum">     313 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     314 </span>            :     integer(int32), dimension(:), intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     315 </span>            :     integer(int32), dimension(:), intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     316 </span>            : 
+<span class="lineNum">     317 </span><span class="lineCov">          3 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     318 </span>            : 
+<span class="lineNum">     319 </span><span class="lineCov">          3 :     if ( size(i1) .ne. size(i2) ) then</span>
+<span class="lineNum">     320 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     321 </span>            :     else
+<span class="lineNum">     322 </span><span class="lineCov">          3 :        if ( maxval(abs(i1-i2)) &gt; 0 ) then</span>
+<span class="lineNum">     323 </span><span class="lineCov">          1 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     324 </span>            :        end if
+<span class="lineNum">     325 </span>            :     end if
+<span class="lineNum">     326 </span>            : 
+<span class="lineNum">     327 </span><span class="lineCov">          3 :   end subroutine assert_equal_i32_1</span>
+<a name="328"><span class="lineNum">     328 </span>            : </a>
+<span class="lineNum">     329 </span>            :   !&gt; Check if two integer (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">     330 </span><span class="lineCov">          2 :   subroutine assert_equal_i64_1(this, i1, i2)</span>
+<span class="lineNum">     331 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     332 </span>            :     integer(int64), dimension(:), intent(in)           :: i1   !&lt; Value to compare.
+<span class="lineNum">     333 </span>            :     integer(int64), dimension(:), intent(in)           :: i2   !&lt; Value to compare.
+<span class="lineNum">     334 </span>            : 
+<span class="lineNum">     335 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span><span class="lineCov">          2 :     if ( size(i1) .ne. size(i2) ) then</span>
+<span class="lineNum">     338 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     339 </span>            :     else
+<span class="lineNum">     340 </span><span class="lineCov">          2 :        if ( maxval(abs(i1-i2)) &gt; 0 ) then</span>
+<span class="lineNum">     341 </span><span class="lineCov">          1 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     342 </span>            :        end if
+<span class="lineNum">     343 </span>            :     end if
+<span class="lineNum">     344 </span>            : 
+<span class="lineNum">     345 </span><span class="lineCov">          2 :   end subroutine assert_equal_i64_1</span>
+<a name="346"><span class="lineNum">     346 </span>            : </a>
+<span class="lineNum">     347 </span>            :   !&gt; Check if two real (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">     348 </span><span class="lineCov">          1 :   subroutine assert_equal_r32_1(this, r1, r2)</span>
+<span class="lineNum">     349 </span>            :     class(tester_t),            intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     350 </span>            :     real(real32), dimension(:), intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     351 </span>            :     real(real32), dimension(:), intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     352 </span>            : 
+<span class="lineNum">     353 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span><span class="lineCov">          1 :     if ( size(r1) .ne. size(r2) ) then</span>
+<span class="lineNum">     356 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     357 </span>            :     else
+<span class="lineNum">     358 </span><span class="lineCov">          1 :        if ( maxval(abs(r1-r2)) &gt; 0 ) then</span>
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     360 </span>            :        end if
+<span class="lineNum">     361 </span>            :     end if
+<span class="lineNum">     362 </span>            : 
+<span class="lineNum">     363 </span><span class="lineCov">          1 :   end subroutine assert_equal_r32_1</span>
+<a name="364"><span class="lineNum">     364 </span>            : </a>
+<span class="lineNum">     365 </span>            :   !&gt; Check if two real (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">     366 </span><span class="lineCov">          1 :   subroutine assert_equal_r64_1(this, r1, r2)</span>
+<span class="lineNum">     367 </span>            :     class(tester_t),            intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     368 </span>            :     real(real64), dimension(:), intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     369 </span>            :     real(real64), dimension(:), intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     370 </span>            : 
+<span class="lineNum">     371 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     372 </span>            : 
+<span class="lineNum">     373 </span><span class="lineCov">          1 :     if ( size(r1) .ne. size(r2) ) then</span>
+<span class="lineNum">     374 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     375 </span>            :     else
+<span class="lineNum">     376 </span><span class="lineCov">          1 :        if ( maxval(abs(r1-r2)) &gt; 0 ) then</span>
+<span class="lineNum">     377 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     378 </span>            :        end if
+<span class="lineNum">     379 </span>            :     end if
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span><span class="lineCov">          1 :   end subroutine assert_equal_r64_1</span>
+<a name="382"><span class="lineNum">     382 </span>            : </a>
+<span class="lineNum">     383 </span>            :   !&gt; Check if two complex (32 bits) arrays (rank 1) are equal.
+<span class="lineNum">     384 </span><span class="lineCov">          1 :   subroutine assert_equal_c32_1(this, c1, c2)</span>
+<span class="lineNum">     385 </span>            :     class(tester_t),               intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     386 </span>            :     complex(real32), dimension(:), intent(in)           :: c1   !&lt; Value to compare.
+<span class="lineNum">     387 </span>            :     complex(real32), dimension(:), intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     388 </span>            : 
+<span class="lineNum">     389 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     390 </span>            : 
+<span class="lineNum">     391 </span><span class="lineCov">          1 :     if ( size(c1) .ne. size(c2) ) then</span>
+<span class="lineNum">     392 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     393 </span>            :     else
+<span class="lineNum">     394 </span><span class="lineCov">          1 :        if ( maxval(abs(c1-c2)) &gt; 0 ) then</span>
+<span class="lineNum">     395 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     396 </span>            :        end if
+<span class="lineNum">     397 </span>            :     end if
+<span class="lineNum">     398 </span>            : 
+<span class="lineNum">     399 </span><span class="lineCov">          1 :   end subroutine assert_equal_c32_1</span>
+<a name="400"><span class="lineNum">     400 </span>            : </a>
+<span class="lineNum">     401 </span>            :   !&gt; Check if two complex (64 bits) arrays (rank 1) are equal.
+<span class="lineNum">     402 </span><span class="lineCov">          1 :   subroutine assert_equal_c64_1(this, c1, c2)</span>
+<span class="lineNum">     403 </span>            :     class(tester_t),               intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     404 </span>            :     complex(real64), dimension(:), intent(in)           :: c1   !&lt; Value to compare.
+<span class="lineNum">     405 </span>            :     complex(real64), dimension(:), intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     406 </span>            : 
+<span class="lineNum">     407 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     408 </span>            : 
+<span class="lineNum">     409 </span><span class="lineCov">          1 :     if ( size(c1) .ne. size(c2) ) then</span>
+<span class="lineNum">     410 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     411 </span>            :     else
+<span class="lineNum">     412 </span><span class="lineCov">          1 :        if ( maxval(abs(c1-c2)) &gt; 0 ) then</span>
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     414 </span>            :        end if
+<span class="lineNum">     415 </span>            :     end if
+<span class="lineNum">     416 </span>            : 
+<span class="lineNum">     417 </span><span class="lineCov">          1 :   end subroutine assert_equal_c64_1</span>
+<a name="418"><span class="lineNum">     418 </span>            : </a>
+<span class="lineNum">     419 </span>            :   !&gt; Check if two logical arrays (rank 1) are equal.
+<span class="lineNum">     420 </span><span class="lineCov">          1 :   subroutine assert_equal_l_1(this, l1, l2)</span>
+<span class="lineNum">     421 </span>            :     class(tester_t), intent(inout)            :: this !&lt; The tester.
+<span class="lineNum">     422 </span>            :     logical,         intent(in), dimension(:) :: l1   !&lt; Value to compare.
+<span class="lineNum">     423 </span>            :     logical,         intent(in), dimension(:) :: l2   !&lt; Value to compare.
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span>            :     integer :: k
+<span class="lineNum">     426 </span>            : 
+<span class="lineNum">     427 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     428 </span>            : 
+<span class="lineNum">     429 </span><span class="lineCov">          1 :     if ( size(l1) .ne. size(l2) ) then</span>
+<span class="lineNum">     430 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     431 </span>            :     else
+<span class="lineNum">     432 </span><span class="lineCov">          3 :        do k = 1, size(l1)</span>
+<span class="lineNum">     433 </span><span class="lineCov">          2 :           if (l1(k) .neqv. l2(k)) then</span>
+<span class="lineNum">     434 </span><span class="lineNoCov">          0 :              this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     435 </span><span class="lineNoCov">          0 :              exit</span>
+<span class="lineNum">     436 </span>            :           end if
+<span class="lineNum">     437 </span>            :        end do
+<span class="lineNum">     438 </span>            :     end if
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineCov">          1 :   end subroutine assert_equal_l_1</span>
+<a name="441"><span class="lineNum">     441 </span>            : </a>
+<span class="lineNum">     442 </span>            :   !&gt; Check if a integer (32 bits) is positive.
+<span class="lineNum">     443 </span><span class="lineNoCov">          0 :   subroutine assert_positive_i8(this, i)</span>
+<span class="lineNum">     444 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     445 </span>            :     integer(int8),   intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     446 </span>            : 
+<span class="lineNum">     447 </span><span class="lineNoCov">          0 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     448 </span><span class="lineNoCov">          0 :     if (i &lt; 0) then</span>
+<span class="lineNum">     449 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     450 </span>            :     end if
+<span class="lineNum">     451 </span>            : 
+<span class="lineNum">     452 </span><span class="lineNoCov">          0 :   end subroutine assert_positive_i8</span>
+<a name="453"><span class="lineNum">     453 </span>            : </a>
+<span class="lineNum">     454 </span>            :   !&gt; Check if a integer (16 bits) is positive.
+<span class="lineNum">     455 </span><span class="lineCov">          1 :   subroutine assert_positive_i16(this, i)</span>
+<span class="lineNum">     456 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     457 </span>            :     integer(int16),  intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     460 </span><span class="lineCov">          1 :     if (i &lt; 0) then</span>
+<span class="lineNum">     461 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     462 </span>            :     end if
+<span class="lineNum">     463 </span>            : 
+<span class="lineNum">     464 </span><span class="lineCov">          1 :   end subroutine assert_positive_i16</span>
+<a name="465"><span class="lineNum">     465 </span>            : </a>
+<span class="lineNum">     466 </span>            :   !&gt; Check if a integer (32 bits) is positive.
+<span class="lineNum">     467 </span><span class="lineCov">          1 :   subroutine assert_positive_i32(this, i)</span>
+<span class="lineNum">     468 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     469 </span>            :     integer(int32),  intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     470 </span>            : 
+<span class="lineNum">     471 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     472 </span><span class="lineCov">          1 :     if (i &lt; 0) then</span>
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     474 </span>            :     end if
+<span class="lineNum">     475 </span>            : 
+<span class="lineNum">     476 </span><span class="lineCov">          1 :   end subroutine assert_positive_i32</span>
+<a name="477"><span class="lineNum">     477 </span>            : </a>
+<span class="lineNum">     478 </span>            :   !&gt; Check if a integer (32 bits) is positive.
+<span class="lineNum">     479 </span><span class="lineCov">          1 :   subroutine assert_positive_i64(this, i)</span>
+<span class="lineNum">     480 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     481 </span>            :     integer(int64),  intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     482 </span>            : 
+<span class="lineNum">     483 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     484 </span><span class="lineCov">          1 :     if (i &lt; 0) then</span>
+<span class="lineNum">     485 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     486 </span>            :     end if
+<span class="lineNum">     487 </span>            : 
+<span class="lineNum">     488 </span><span class="lineCov">          1 :   end subroutine assert_positive_i64</span>
+<a name="489"><span class="lineNum">     489 </span>            : </a>
+<span class="lineNum">     490 </span>            :   !&gt; Check if a real (32 bits) is positive.
+<span class="lineNum">     491 </span><span class="lineCov">          2 :   subroutine assert_positive_r32(this, r)</span>
+<span class="lineNum">     492 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     493 </span>            :     real(real32),    intent(in)           :: r    !&lt; Value to check.
+<span class="lineNum">     494 </span>            : 
+<span class="lineNum">     495 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     496 </span><span class="lineCov">          2 :     if (r &lt; 0) then</span>
+<span class="lineNum">     497 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     498 </span>            :     end if
+<span class="lineNum">     499 </span>            : 
+<span class="lineNum">     500 </span><span class="lineCov">          2 :   end subroutine assert_positive_r32</span>
+<a name="501"><span class="lineNum">     501 </span>            : </a>
+<span class="lineNum">     502 </span>            :   !&gt; Check if a real (64 bits) is positive.
+<span class="lineNum">     503 </span><span class="lineCov">          1 :   subroutine assert_positive_r64(this, r)</span>
+<span class="lineNum">     504 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     505 </span>            :     real(real64),    intent(in)           :: r    !&lt; Value to check.
+<span class="lineNum">     506 </span>            : 
+<span class="lineNum">     507 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     508 </span><span class="lineCov">          1 :     if (r &lt; 0) then</span>
+<span class="lineNum">     509 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     510 </span>            :     end if
+<span class="lineNum">     511 </span>            : 
+<span class="lineNum">     512 </span><span class="lineCov">          1 :   end subroutine assert_positive_r64</span>
+<a name="513"><span class="lineNum">     513 </span>            : </a>
+<span class="lineNum">     514 </span>            :   !&gt; Check if a integer (8 bits) array (rank 1) is positive.
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :   subroutine assert_positive_i8_1(this, i)</span>
+<span class="lineNum">     516 </span>            :     class(tester_t),             intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     517 </span>            :     integer(int8), dimension(:), intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     518 </span>            : 
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     520 </span>            : 
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :     if ( minval(i) &lt; 0 ) then</span>
+<span class="lineNum">     522 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     523 </span>            :     end if
+<span class="lineNum">     524 </span>            : 
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :   end subroutine assert_positive_i8_1</span>
+<a name="526"><span class="lineNum">     526 </span>            : </a>
+<span class="lineNum">     527 </span>            :   !&gt; Check if a integer (16 bits) array (rank 1) is positive.
+<span class="lineNum">     528 </span><span class="lineCov">          1 :   subroutine assert_positive_i16_1(this, i)</span>
+<span class="lineNum">     529 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     530 </span>            :     integer(int16), dimension(:), intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     531 </span>            : 
+<span class="lineNum">     532 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     533 </span>            : 
+<span class="lineNum">     534 </span><span class="lineCov">          1 :     if ( minval(i) &lt; 0 ) then</span>
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     536 </span>            :     end if
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span><span class="lineCov">          1 :   end subroutine assert_positive_i16_1</span>
+<a name="539"><span class="lineNum">     539 </span>            : </a>
+<span class="lineNum">     540 </span>            :   !&gt; Check if a integer (32 bits) array (rank 1) is positive.
+<span class="lineNum">     541 </span><span class="lineCov">          1 :   subroutine assert_positive_i32_1(this, i)</span>
+<span class="lineNum">     542 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     543 </span>            :     integer(int32), dimension(:), intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     544 </span>            : 
+<span class="lineNum">     545 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     546 </span>            : 
+<span class="lineNum">     547 </span><span class="lineCov">          1 :     if ( minval(i) &lt; 0 ) then</span>
+<span class="lineNum">     548 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     549 </span>            :     end if
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span><span class="lineCov">          1 :   end subroutine assert_positive_i32_1</span>
+<a name="552"><span class="lineNum">     552 </span>            : </a>
+<span class="lineNum">     553 </span>            :   !&gt; Check if a integer (64 bits) array (rank 1) is positive.
+<span class="lineNum">     554 </span><span class="lineCov">          1 :   subroutine assert_positive_i64_1(this, i)</span>
+<span class="lineNum">     555 </span>            :     class(tester_t),              intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     556 </span>            :     integer(int64), dimension(:), intent(in)           :: i    !&lt; Value to check.
+<span class="lineNum">     557 </span>            : 
+<span class="lineNum">     558 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     559 </span>            : 
+<span class="lineNum">     560 </span><span class="lineCov">          1 :     if ( minval(i) &lt; 0 ) then</span>
+<span class="lineNum">     561 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     562 </span>            :     end if
+<span class="lineNum">     563 </span>            : 
+<span class="lineNum">     564 </span><span class="lineCov">          1 :   end subroutine assert_positive_i64_1</span>
+<a name="565"><span class="lineNum">     565 </span>            : </a>
+<span class="lineNum">     566 </span>            :   !&gt; Check if a real (32 bits) array (rank 1) is positive.
+<span class="lineNum">     567 </span><span class="lineCov">          1 :   subroutine assert_positive_r32_1(this, r)</span>
+<span class="lineNum">     568 </span>            :     class(tester_t),            intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     569 </span>            :     real(real32), dimension(:), intent(in)           :: r    !&lt; Value to check.
+<span class="lineNum">     570 </span>            : 
+<span class="lineNum">     571 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     572 </span>            : 
+<span class="lineNum">     573 </span><span class="lineCov">          1 :     if ( minval(r) &lt; 0 ) then</span>
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     575 </span>            :     end if
+<span class="lineNum">     576 </span>            : 
+<span class="lineNum">     577 </span><span class="lineCov">          1 :   end subroutine assert_positive_r32_1</span>
+<a name="578"><span class="lineNum">     578 </span>            : </a>
+<span class="lineNum">     579 </span>            :   !&gt; Check if a real (64 bits) array (rank 1) is positive.
+<span class="lineNum">     580 </span><span class="lineCov">          1 :   subroutine assert_positive_r64_1(this, r)</span>
+<span class="lineNum">     581 </span>            :     class(tester_t),            intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     582 </span>            :     real(real64), dimension(:), intent(in)           :: r    !&lt; Value to check.
+<span class="lineNum">     583 </span>            : 
+<span class="lineNum">     584 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     585 </span>            : 
+<span class="lineNum">     586 </span><span class="lineCov">          1 :     if ( minval(r) &lt; 0 ) then</span>
+<span class="lineNum">     587 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     588 </span>            :     end if
+<span class="lineNum">     589 </span>            : 
+<span class="lineNum">     590 </span><span class="lineCov">          1 :   end subroutine assert_positive_r64_1</span>
+<a name="591"><span class="lineNum">     591 </span>            : </a>
+<span class="lineNum">     592 </span>            :   !&gt; Check if two reals (32 bits) are close with respect a tolerance.
+<span class="lineNum">     593 </span><span class="lineCov">          2 :   subroutine assert_close_r32(this, r1, r2)</span>
+<span class="lineNum">     594 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     595 </span>            :     real(real32),    intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     596 </span>            :     real(real32),    intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     597 </span>            : 
+<span class="lineNum">     598 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     599 </span>            : 
+<span class="lineNum">     600 </span><span class="lineCov">          2 :     if ( abs(r1-r2) &gt; this% tolerance32 ) then</span>
+<span class="lineNum">     601 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     602 </span>            :     end if
+<span class="lineNum">     603 </span>            : 
+<span class="lineNum">     604 </span><span class="lineCov">          2 :   end subroutine assert_close_r32</span>
+<a name="605"><span class="lineNum">     605 </span>            : </a>
+<span class="lineNum">     606 </span>            :   !&gt; Check if two reals (64 bits) are close with respect a tolerance.
+<span class="lineNum">     607 </span><span class="lineCov">          3 :   subroutine assert_close_r64(this, r1, r2)</span>
+<span class="lineNum">     608 </span>            :     class(tester_t),  intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     609 </span>            :     real(real64),     intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     610 </span>            :     real(real64),     intent(in)           :: r2   !&lt; Value to compare.
+<span class="lineNum">     611 </span>            : 
+<span class="lineNum">     612 </span><span class="lineCov">          3 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     613 </span>            : 
+<span class="lineNum">     614 </span><span class="lineCov">          3 :     if ( abs(r1-r2) &gt; this% tolerance64 ) then</span>
+<span class="lineNum">     615 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     616 </span>            :     end if
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span><span class="lineCov">          3 :   end subroutine assert_close_r64</span>
+<a name="619"><span class="lineNum">     619 </span>            : </a>
+<span class="lineNum">     620 </span>            :   !&gt; Check if two real (32 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     621 </span><span class="lineCov">          1 :   subroutine assert_close_r32_1(this, r1, r2)</span>
+<span class="lineNum">     622 </span>            :     class(tester_t), intent(inout)            :: this !&lt; The tester.
+<span class="lineNum">     623 </span>            :     real(real32),    intent(in), dimension(:) :: r1   !&lt; Value to compare.
+<span class="lineNum">     624 </span>            :     real(real32),    intent(in), dimension(:) :: r2   !&lt; Value to compare.
+<span class="lineNum">     625 </span>            : 
+<span class="lineNum">     626 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     627 </span>            : 
+<span class="lineNum">     628 </span><span class="lineCov">          1 :     if ( size(r1) .ne. size(r2) ) then</span>
+<span class="lineNum">     629 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     630 </span>            :     else
+<span class="lineNum">     631 </span><span class="lineCov">          1 :        if ( maxval(abs(r1-r2)) &gt; this% tolerance32 ) then</span>
+<span class="lineNum">     632 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     633 </span>            :        end if
+<span class="lineNum">     634 </span>            :     end if
+<span class="lineNum">     635 </span>            : 
+<span class="lineNum">     636 </span><span class="lineCov">          1 :   end subroutine assert_close_r32_1</span>
+<a name="637"><span class="lineNum">     637 </span>            : </a>
+<span class="lineNum">     638 </span>            :   !&gt; Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     639 </span><span class="lineCov">          1 :   subroutine assert_close_r64_1(this, r1, r2)</span>
+<span class="lineNum">     640 </span>            :     class(tester_t), intent(inout)            :: this !&lt; The tester.
+<span class="lineNum">     641 </span>            :     real(real64),    intent(in), dimension(:) :: r1   !&lt; Value to compare.
+<span class="lineNum">     642 </span>            :     real(real64),    intent(in), dimension(:) :: r2   !&lt; Value to compare.
+<span class="lineNum">     643 </span>            : 
+<span class="lineNum">     644 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     645 </span>            : 
+<span class="lineNum">     646 </span><span class="lineCov">          1 :     if ( size(r1) .ne. size(r2) ) then</span>
+<span class="lineNum">     647 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     648 </span>            :     else
+<span class="lineNum">     649 </span><span class="lineCov">          1 :        if ( maxval(abs(r1-r2)) &gt; this% tolerance64 ) then</span>
+<span class="lineNum">     650 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     651 </span>            :        end if
+<span class="lineNum">     652 </span>            :     end if
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span><span class="lineCov">          1 :   end subroutine assert_close_r64_1</span>
+<a name="655"><span class="lineNum">     655 </span>            : </a>
+<span class="lineNum">     656 </span>            :   !&gt; Check if two complex numbers (32 bits) are close with respect a tolerance.
+<span class="lineNum">     657 </span><span class="lineCov">          1 :   subroutine assert_close_c32(this, c1, c2)</span>
+<span class="lineNum">     658 </span>            :     class(tester_t), intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     659 </span>            :     complex(real32), intent(in)           :: c1   !&lt; Value to compare.
+<span class="lineNum">     660 </span>            :     complex(real32), intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     663 </span>            : 
+<span class="lineNum">     664 </span><span class="lineCov">          1 :     if ( abs(c1-c2) &gt; this% tolerance32 ) then</span>
+<span class="lineNum">     665 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     666 </span>            :     end if
+<span class="lineNum">     667 </span>            : 
+<span class="lineNum">     668 </span><span class="lineCov">          1 :   end subroutine assert_close_c32</span>
+<a name="669"><span class="lineNum">     669 </span>            : </a>
+<span class="lineNum">     670 </span>            :   !&gt; Check if two complex numbers (64 bits) are close with respect a tolerance.
+<span class="lineNum">     671 </span><span class="lineCov">          2 :   subroutine assert_close_c64(this, r1, c2)</span>
+<span class="lineNum">     672 </span>            :     class(tester_t),  intent(inout)        :: this !&lt; The tester.
+<span class="lineNum">     673 </span>            :     complex(real64),  intent(in)           :: r1   !&lt; Value to compare.
+<span class="lineNum">     674 </span>            :     complex(real64),  intent(in)           :: c2   !&lt; Value to compare.
+<span class="lineNum">     675 </span>            : 
+<span class="lineNum">     676 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     677 </span>            : 
+<span class="lineNum">     678 </span><span class="lineCov">          2 :     if ( abs(r1-c2) &gt; this% tolerance64 ) then</span>
+<span class="lineNum">     679 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     680 </span>            :     end if
+<span class="lineNum">     681 </span>            : 
+<span class="lineNum">     682 </span><span class="lineCov">          2 :   end subroutine assert_close_c64</span>
+<a name="683"><span class="lineNum">     683 </span>            : </a>
+<span class="lineNum">     684 </span>            :   !&gt; Check if two complex (32 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     685 </span><span class="lineCov">          1 :   subroutine assert_close_c32_1(this, c1, c2)</span>
+<span class="lineNum">     686 </span>            :     class(tester_t), intent(inout)            :: this !&lt; The tester.
+<span class="lineNum">     687 </span>            :     complex(real32), intent(in), dimension(:) :: c1   !&lt; Value to compare.
+<span class="lineNum">     688 </span>            :     complex(real32), intent(in), dimension(:) :: c2   !&lt; Value to compare.
+<span class="lineNum">     689 </span>            : 
+<span class="lineNum">     690 </span><span class="lineCov">          1 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     691 </span>            : 
+<span class="lineNum">     692 </span><span class="lineCov">          1 :     if ( size(c1) .ne. size(c2) ) then</span>
+<span class="lineNum">     693 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     694 </span>            :     else
+<span class="lineNum">     695 </span><span class="lineCov">          1 :        if ( maxval(abs(c1-c2)) &gt; this% tolerance32 ) then</span>
+<span class="lineNum">     696 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     697 </span>            :        end if
+<span class="lineNum">     698 </span>            :     end if
+<span class="lineNum">     699 </span>            : 
+<span class="lineNum">     700 </span><span class="lineCov">          1 :   end subroutine assert_close_c32_1</span>
+<a name="701"><span class="lineNum">     701 </span>            : </a>
+<span class="lineNum">     702 </span>            :   !&gt; Check if two real (64 bits) arrays (rank 1) are close with respect a tolerance.
+<span class="lineNum">     703 </span><span class="lineCov">          2 :   subroutine assert_close_c64_1(this, c1, c2)</span>
+<span class="lineNum">     704 </span>            :     class(tester_t), intent(inout)            :: this !&lt; The tester.
+<span class="lineNum">     705 </span>            :     complex(real64), intent(in), dimension(:) :: c1   !&lt; Value to compare.
+<span class="lineNum">     706 </span>            :     complex(real64), intent(in), dimension(:) :: c2   !&lt; Value to compare.
+<span class="lineNum">     707 </span>            : 
+<span class="lineNum">     708 </span><span class="lineCov">          2 :     this% n_tests = this% n_tests + 1</span>
+<span class="lineNum">     709 </span>            : 
+<span class="lineNum">     710 </span><span class="lineCov">          2 :     if ( size(c1) .ne. size(c2) ) then</span>
+<span class="lineNum">     711 </span><span class="lineNoCov">          0 :        this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     712 </span>            :     else
+<span class="lineNum">     713 </span><span class="lineCov">          2 :        if ( maxval(abs(c1-c2)) &gt; this% tolerance64 ) then</span>
+<span class="lineNum">     714 </span><span class="lineNoCov">          0 :           this% n_errors = this% n_errors + 1</span>
+<span class="lineNum">     715 </span>            :        end if
+<span class="lineNum">     716 </span>            :     end if
+<span class="lineNum">     717 </span>            : 
+<span class="lineNum">     718 </span><span class="lineCov">          2 :   end subroutine assert_close_c64_1</span>
+<span class="lineNum">     719 </span>            : 
+<span class="lineNum">     720 </span>            : end module tester
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.10</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
