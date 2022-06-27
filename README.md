@@ -33,8 +33,8 @@ Peter Hill
 ## Installation
 
 `fortran_tester` consists of a single Fortran file. You can just drop `src/tester.f90` in
-your Fortran project or build using [CMake](https://cmake.org/) or
-[FoBiS](https://github.com/szaghi/FoBiS).
+your Fortran project or build using [CMake](https://cmake.org/), 
+[FoBiS](https://github.com/szaghi/FoBiS), or [FPM](https://github.com/fortran-lang/fpm).
 
 ## Coverage information
 
