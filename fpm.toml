@@ -1,6 +1,6 @@
 name = "fortran_tester"
 author = "Pierre de Buyl"
-copyright = "Copyright (C) 2015-2020 Pierre de Buyl and contributors"
+copyright = "Copyright (C) 2015-2022 Pierre de Buyl and contributors"
 license = "BSD"
 description = "Fortran module to test Fortran programs"
 maintainer = "Pierre de Buyl"

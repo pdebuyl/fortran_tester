@@ -28,7 +28,7 @@ use as an automated test.
 **License:** BSD
 
 Contributors: Peter Colberg, Stefano Szaghi, Pietro Bonfa, Elias Lettl, Giacomo Rossi,
-Peter Hill
+Peter Hill, Jacob Williams
 
 ## Installation
 

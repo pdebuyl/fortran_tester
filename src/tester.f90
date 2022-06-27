@@ -1,5 +1,5 @@
 ! This file is part of fortran_tester
-! Copyright 2015-2020 Pierre de Buyl and contributors
+! Copyright 2015-2022 Pierre de Buyl and contributors
 ! License: BSD
 
 !> Routines to test Fortran programs
